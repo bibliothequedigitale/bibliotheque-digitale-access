@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Bibliotheque Digitale Customer Library</title>
+  <link rel="stylesheet" href="assets/styles.css?v=20260511-secure-product-design-v2">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/library" aria-label="Bibliotheque Digitale home">
+      <span>BD</span>
+      <strong>Bibliotheque Digitale</strong>
+    </a>
+    <nav>
+      <a href="#/library">My Library</a>
+      <a href="#/request-access">Request Access</a>
+      <a href="#/admin" data-admin-link hidden>Admin</a>
+      <button class="ghost" type="button" data-sign-out hidden>Sign out</button>
+    </nav>
+  </header>
+
+  <main id="app" class="app-shell" aria-live="polite"></main>
+
+  <template id="auth-template">
+    <section class="auth-card">
+      <div>
+        <p class="eyebrow">Private Customer Library</p>
+        <h1>Access your digital products and bonuses.</h1>
+        <p>Create an account or sign in with the same email you use for your digital product access. After approval, purchased products unlock inside your library.</p>
+      </div>
+      <form data-auth-form class="panel">
+        <label>Email
+          <input name="email" type="email" autocomplete="email" required>
+        </label>
+        <label>Password
+          <input name="password" type="password" autocomplete="current-password" required minlength="6">
+        </label>
+        <div class="button-row">
+          <button type="submit" data-auth-mode="sign-in">Sign in</button>
+          <button class="secondary" type="submit" data-auth-mode="sign-up">Create account</button>
+        </div>
+        <p class="form-note" data-auth-message></p>
+      </form>
+    </section>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-config.js?v=20260511-secure-product-design-v2"></script>
+  <script src="assets/app.js?v=20260511-secure-product-design-v2"></script>
+</body>
+</html>
