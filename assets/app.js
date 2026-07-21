@@ -194,8 +194,89 @@ function renderLibrary() {
   renderShell(
     "My Product Library",
     "Access every digital product you purchased from Bibliotheque Digitale. Locked products can be requested after purchase.",
-    `<section class="grid">${cards}</section>`
+    html`
+      <section class="grid">${cards}</section>
+      <section class="aia-library-bridge">
+        <div class="aia-library-image">
+          <img src="assets/aia-funnel/aina-editorial-closeup.png" alt="Aïna embodying a premium editorial brand" loading="lazy">
+        </div>
+        <div class="aia-library-copy">
+          <p class="eyebrow">Your next chapter</p>
+          <h2>You built the brand. Now bring it to life.</h2>
+          <p>Your positioning, identity and offer are the foundation. Discover how an AI influencer or digital twin can embody your universe, create content and help your digital business grow—without putting you in front of the camera.</p>
+          <a class="button aia-button" href="#/discover-the-aia">Discover THE A.I.A</a>
+        </div>
+      </section>
+    `
   );
+}
+
+function renderDiscoverAia() {
+  const salesPage = "https://the-aicon-academy.vercel.app/pages/vente-b.html?utm_source=bibliotheque_digitale&utm_medium=customer_library&utm_campaign=branding_planner_bridge&utm_content=discover_aia";
+
+  app.innerHTML = html`
+    <section class="aia-page">
+      <div class="aia-hero">
+        <div class="aia-hero-copy">
+          <a class="aia-back" href="#/library">← Back to my library</a>
+          <p class="eyebrow">From brand foundation to living presence</p>
+          <h1>Your brand deserves more than a beautiful product. <em>It deserves a presence.</em></h1>
+          <p class="aia-lead">You now have the foundations: your positioning, message, identity and offer. The next step is turning that strategy into a recognizable world people can see, feel and remember.</p>
+          <div class="button-row">
+            <a class="button aia-button" href="${salesPage}" target="_blank" rel="noopener">Meet THE A.I.A</a>
+            <a class="button aia-outline" href="#aia-possibilities">See what becomes possible</a>
+          </div>
+          <p class="aia-language-note">THE A.I.A is currently delivered in French. Text lessons can be translated into your preferred language directly in Google Chrome.</p>
+        </div>
+        <div class="aia-hero-visual">
+          <img src="assets/aia-funnel/aina-hero.png" alt="Aïna, the AI influencer behind THE A.I.A">
+          <span>Meet Aïna · AI influencer · brand muse</span>
+        </div>
+      </div>
+
+      <section class="aia-manifesto">
+        <p class="eyebrow">The missing bridge</p>
+        <h2>You do not need to become the influencer.<br><em>You can create the influencer your brand needs.</em></h2>
+        <p>A strong brand still needs visibility, consistent content and a way to connect with the right audience. THE A.I.A shows you how to build an AI influencer or digital twin capable of embodying your universe, presenting your products and supporting a monetizable online presence—without filming yourself every day.</p>
+      </section>
+
+      <section class="aia-possibilities" id="aia-possibilities">
+        <div class="aia-editorial-image tall">
+          <img src="assets/aia-funnel/aina-editorial-full.png" alt="Editorial campaign created with an AI brand muse" loading="lazy">
+        </div>
+        <div class="aia-possibilities-copy">
+          <p class="eyebrow">What you can build</p>
+          <h2>One identity. A complete content and revenue universe.</h2>
+          <div class="aia-point-grid">
+            <article><strong>01</strong><h3>Create your AI muse</h3><p>Design an ultra-realistic influencer or digital twin aligned with your brand identity.</p></article>
+            <article><strong>02</strong><h3>Produce without filming</h3><p>Create editorial, lifestyle, UGC, video, podcast and social content without showing your face.</p></article>
+            <article><strong>03</strong><h3>Promote your offers</h3><p>Give your digital products, expertise or signature offer a recognizable face and story.</p></article>
+            <article><strong>04</strong><h3>Choose your revenue path</h3><p>Explore digital products, affiliate income, paid UGC, brand collaborations and your own offer.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="aia-proof-strip">
+        <div><strong>3</strong><span>strategic transformation phases</span></div>
+        <div><strong>25+</strong><span>missions, workshops and resources</span></div>
+        <div><strong>6</strong><span>possible monetization paths</span></div>
+        <div><strong>1</strong><span>private learning community</span></div>
+      </section>
+
+      <section class="aia-final-cta">
+        <div class="aia-final-image">
+          <img src="assets/aia-funnel/aina-editorial-closeup.png" alt="Aïna in a premium editorial beauty campaign" loading="lazy">
+        </div>
+        <div>
+          <p class="eyebrow">Your brand is ready for a face</p>
+          <h2>Turn your strategy into a presence people remember.</h2>
+          <p>Discover the complete path to create your AI influencer, build content around your universe and connect it to the revenue model that fits your business.</p>
+          <a class="button aia-button" href="${salesPage}" target="_blank" rel="noopener">Discover THE A.I.A</a>
+          <p class="aia-language-note">You will open the full French sales page in a new tab. Chrome can translate its text automatically.</p>
+        </div>
+      </section>
+    </section>
+  `;
 }
 
 function renderProductPage(slug) {
@@ -355,6 +436,16 @@ function renderBrandingPlannerProduct(product, files) {
           ${fileButton("Open Copy Pack", copyPack)}
         </article>
       </div>
+    </section>
+
+    <section class="aia-product-bridge">
+      <div>
+        <p class="eyebrow">After your brand strategy</p>
+        <h2>Ready to turn your brand into content?</h2>
+        <p>Your planner gives you the strategy. THE A.I.A shows you how to create an AI face for your brand, produce content without filming yourself and connect that presence to real monetization paths.</p>
+        <a class="button aia-button" href="#/discover-the-aia">See the next step</a>
+      </div>
+      <img src="assets/aia-funnel/aina-editorial-full.png" alt="Aïna in a premium AI editorial campaign" loading="lazy">
     </section>
 
     <section class="product-section">
@@ -734,6 +825,7 @@ async function renderRoute() {
   if (current.startsWith("/product/")) renderProductPage(current.replace("/product/", ""));
   else if (current === "/request-access") renderRequestAccess();
   else if (current === "/admin") renderAdmin();
+  else if (current === "/discover-the-aia") renderDiscoverAia();
   else renderLibrary();
 }
 
