@@ -411,6 +411,38 @@ async function openSecureFile(path) {
   const message = app.querySelector("[data-file-message]");
   if (message) message.textContent = "Preparing secure link...";
 
+  if (path.toLowerCase().endsWith(".html")) {
+    const courseTab = window.open("", "_blank");
+
+    if (!courseTab) {
+      if (message) message.textContent = "Please allow pop-ups for this site, then click Open again.";
+      return;
+    }
+
+    courseTab.document.title = "Loading secure resource...";
+    courseTab.document.body.textContent = "Loading your secure resource...";
+
+    const { data: htmlFile, error: downloadError } = await db
+      .storage
+      .from(config.storageBucket || "product-files")
+      .download(path);
+
+    if (downloadError) {
+      courseTab.close();
+      if (message) message.textContent = downloadError.message;
+      return;
+    }
+
+    const htmlContent = await htmlFile.text();
+    const displayFile = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+    const displayUrl = URL.createObjectURL(displayFile);
+    courseTab.location.replace(displayUrl);
+    setTimeout(() => URL.revokeObjectURL(displayUrl), 60000);
+
+    if (message) message.textContent = "Secure resource opened in a new tab.";
+    return;
+  }
+
   const { data, error } = await db
     .storage
     .from(config.storageBucket || "product-files")
