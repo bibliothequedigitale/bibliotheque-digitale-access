@@ -541,6 +541,32 @@ th {
   box-shadow: 0 24px 50px rgba(40, 20, 17, .18);
 }
 
+.resource-toast {
+  position: fixed;
+  z-index: 9999;
+  right: 22px;
+  bottom: 22px;
+  width: min(430px, calc(100vw - 32px));
+  padding: 15px 18px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--rose-dark);
+  border-radius: 8px;
+  background: #fffdf9;
+  color: var(--ink);
+  box-shadow: 0 18px 44px rgba(45, 25, 22, .2);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.resource-toast.visible { opacity: 1; transform: translateY(0); }
+.resource-toast.success { border-left-color: #3f8b64; }
+.resource-toast.error { border-left-color: #b34343; background: #fff6f4; }
+
 .aia-library-image,
 .aia-product-bridge > img,
 .aia-final-image {

@@ -500,10 +500,10 @@ function renderBrandingPlannerProduct(product, files) {
 
 async function openSecureFile(path) {
   const message = app.querySelector("[data-file-message]");
-  if (message) message.textContent = "Preparing secure link...";
+  showFileStatus("Preparing your secure resource...", "loading");
 
   if (!path) {
-    if (message) message.textContent = "This resource is not configured yet. Please contact Bibliotheque Digitale.";
+    showFileStatus("This resource is not configured yet. Please contact Bibliotheque Digitale.", "error");
     return;
   }
 
@@ -512,7 +512,7 @@ async function openSecureFile(path) {
   const resourceTab = window.open("", "_blank");
 
   if (!resourceTab) {
-    if (message) message.textContent = "Please allow pop-ups for this site, then click Open again.";
+    showFileStatus("Please allow pop-ups for this site, then click Open again.", "error");
     return;
   }
 
@@ -527,7 +527,10 @@ async function openSecureFile(path) {
 
     if (downloadError) {
       resourceTab.close();
-      if (message) message.textContent = downloadError.message;
+      showFileStatus(
+        downloadError.message || "Your file could not be opened. Please sign out, sign in again, and retry.",
+        "error"
+      );
       return;
     }
 
@@ -540,7 +543,7 @@ async function openSecureFile(path) {
     resourceTab.location.replace(displayUrl);
     setTimeout(() => URL.revokeObjectURL(displayUrl), 60000);
 
-    if (message) message.textContent = "Secure resource opened in a new tab.";
+    showFileStatus("Secure resource opened in a new tab.", "success");
     return;
   }
 
@@ -551,12 +554,34 @@ async function openSecureFile(path) {
 
   if (error) {
     resourceTab.close();
-    if (message) message.textContent = error.message;
+    showFileStatus(
+      error.message || "Your file could not be opened. Please sign out, sign in again, and retry.",
+      "error"
+    );
     return;
   }
 
-  if (message) message.textContent = "Secure link ready. It opens in a new tab and expires automatically.";
+  showFileStatus("Secure resource opened in a new tab.", "success");
   resourceTab.location.replace(data.signedUrl);
+}
+
+function showFileStatus(text, type = "loading") {
+  const message = app.querySelector("[data-file-message]");
+  if (message) message.textContent = text;
+
+  let toast = document.querySelector("[data-resource-toast]");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.dataset.resourceToast = "";
+    toast.className = "resource-toast";
+    toast.setAttribute("role", "status");
+    document.body.appendChild(toast);
+  }
+
+  toast.className = `resource-toast ${type} visible`;
+  toast.textContent = text;
+  window.clearTimeout(showFileStatus.timeoutId);
+  showFileStatus.timeoutId = window.setTimeout(() => toast.classList.remove("visible"), type === "error" ? 9000 : 3500);
 }
 
 function createTextResourceViewer(content, path) {
