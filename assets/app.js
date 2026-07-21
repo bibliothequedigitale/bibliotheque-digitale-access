@@ -502,32 +502,42 @@ async function openSecureFile(path) {
   const message = app.querySelector("[data-file-message]");
   if (message) message.textContent = "Preparing secure link...";
 
-  if (path.toLowerCase().endsWith(".html")) {
-    const courseTab = window.open("", "_blank");
+  if (!path) {
+    if (message) message.textContent = "This resource is not configured yet. Please contact Bibliotheque Digitale.";
+    return;
+  }
 
-    if (!courseTab) {
-      if (message) message.textContent = "Please allow pop-ups for this site, then click Open again.";
-      return;
-    }
+  const extension = path.split(".").pop().toLowerCase();
+  const isBrowserText = ["html", "htm", "md", "markdown", "txt"].includes(extension);
+  const resourceTab = window.open("", "_blank");
 
-    courseTab.document.title = "Loading secure resource...";
-    courseTab.document.body.textContent = "Loading your secure resource...";
+  if (!resourceTab) {
+    if (message) message.textContent = "Please allow pop-ups for this site, then click Open again.";
+    return;
+  }
 
+  resourceTab.document.title = "Loading secure resource...";
+  resourceTab.document.body.textContent = "Loading your secure resource...";
+
+  if (isBrowserText) {
     const { data: htmlFile, error: downloadError } = await db
       .storage
       .from(config.storageBucket || "product-files")
       .download(path);
 
     if (downloadError) {
-      courseTab.close();
+      resourceTab.close();
       if (message) message.textContent = downloadError.message;
       return;
     }
 
-    const htmlContent = await htmlFile.text();
+    const fileContent = await htmlFile.text();
+    const htmlContent = ["md", "markdown", "txt"].includes(extension)
+      ? createTextResourceViewer(fileContent, path)
+      : fileContent;
     const displayFile = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
     const displayUrl = URL.createObjectURL(displayFile);
-    courseTab.location.replace(displayUrl);
+    resourceTab.location.replace(displayUrl);
     setTimeout(() => URL.revokeObjectURL(displayUrl), 60000);
 
     if (message) message.textContent = "Secure resource opened in a new tab.";
@@ -540,12 +550,78 @@ async function openSecureFile(path) {
     .createSignedUrl(path, 600);
 
   if (error) {
+    resourceTab.close();
     if (message) message.textContent = error.message;
     return;
   }
 
   if (message) message.textContent = "Secure link ready. It opens in a new tab and expires automatically.";
-  window.open(data.signedUrl, "_blank", "noopener");
+  resourceTab.location.replace(data.signedUrl);
+}
+
+function createTextResourceViewer(content, path) {
+  const title = path.includes("bonus_worksheets") ? "Bonus Worksheets" : "Bibliotheque Digitale Resource";
+  const lines = String(content).replaceAll("\r\n", "\n").split("\n");
+  const output = [];
+  let listOpen = false;
+
+  const closeList = () => {
+    if (listOpen) output.push("</ul>");
+    listOpen = false;
+  };
+
+  const inline = (value) => escapeHtml(value)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`(.+?)`/g, "<code>$1</code>");
+
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      closeList();
+      return;
+    }
+
+    const heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
+    if (heading) {
+      closeList();
+      const level = Math.min(heading[1].length + 1, 5);
+      output.push(`<h${level}>${inline(heading[2])}</h${level}>`);
+      return;
+    }
+
+    const checklist = trimmed.match(/^-\s+\[([ xX])\]\s+(.+)$/);
+    const bullet = trimmed.match(/^[-*]\s+(.+)$/);
+    if (checklist || bullet) {
+      if (!listOpen) output.push("<ul>");
+      listOpen = true;
+      const item = checklist
+        ? `<span class="check">${checklist[1].toLowerCase() === "x" ? "☑" : "☐"}</span>${inline(checklist[2])}`
+        : inline(bullet[1]);
+      output.push(`<li>${item}</li>`);
+      return;
+    }
+
+    closeList();
+    output.push(`<p>${inline(trimmed)}</p>`);
+  });
+  closeList();
+
+  return `<!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>${escapeHtml(title)}</title>
+        <style>
+          :root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#fbf3ef;color:#241817;font-family:Arial,sans-serif;line-height:1.7}.top{padding:18px 24px;background:#17100f;color:#fff8f4;border-bottom:3px solid #d79a88}.top strong{font-family:Georgia,serif;font-size:20px}.wrap{width:min(860px,calc(100% - 32px));margin:32px auto;padding:clamp(24px,6vw,64px);background:#fff;border:1px solid #e7c4b9;box-shadow:0 18px 45px rgba(69,35,30,.09)}h1,h2,h3,h4,h5{font-family:Georgia,serif;line-height:1.15;margin:1.5em 0 .55em}h2{font-size:clamp(34px,7vw,58px);margin-top:0}h3{font-size:28px;color:#8f574b}h4{font-size:21px}p{margin:.55em 0 1.1em}ul{padding-left:0;list-style:none;margin:0 0 1.4em}li{padding:10px 12px;margin:6px 0;background:#fff8f4;border-left:3px solid #d79a88}.check{display:inline-block;width:28px;color:#9a5f52;font-size:19px}code{padding:2px 5px;background:#f5e3dc;border-radius:3px}@media print{.top{display:none}.wrap{width:100%;margin:0;border:0;box-shadow:none}}
+        </style>
+      </head>
+      <body>
+        <header class="top"><strong>Bibliotheque Digitale</strong> · Private Customer Resource</header>
+        <main class="wrap">${output.join("")}</main>
+      </body>
+    </html>`;
 }
 
 function renderRequestAccess() {
