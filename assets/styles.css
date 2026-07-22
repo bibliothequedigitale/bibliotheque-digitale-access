@@ -1410,6 +1410,13 @@ body.public-site { background: #fbf5f1; }
   .bd-values { grid-template-columns:repeat(2,1fr); }
   .bd-freebie-visual { min-height:780px; max-height:920px; }
 }
+.admin-date { color:#5d2940; white-space:nowrap; font-size:12px; }
+.admin-audit-notice { margin-bottom:18px; }
+.admin-activity-panel { margin-bottom:22px; }
+.admin-panel-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:20px; }
+.admin-panel-heading h2 { margin-top:5px; font-size:clamp(28px,4vw,42px); }
+.admin-panel-heading > span { padding:8px 12px; border-radius:999px; color:#6a3048; background:#f3dde5; font-size:11px; font-weight:850; }
+.admin-user-email { display:block; margin-top:4px; color:var(--muted); font-size:11px; font-weight:500; }
 @media (max-width: 640px) {
   body.public-site .topbar { align-items:center; padding:11px 14px; }
   body.public-site .brand strong em { font-size:18px; }

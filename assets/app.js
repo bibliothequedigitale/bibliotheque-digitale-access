@@ -25,7 +25,9 @@ const state = {
   products: [],
   access: [],
   requests: [],
-  profile: null
+  profile: null,
+  authUsers: [],
+  authAuditReady: true
 };
 
 let passwordRecoveryMode = false;
@@ -199,6 +201,17 @@ function renderAuth(message = "") {
       ? error.message
       : "Email sent. Check your inbox and spam folder, then click the link to choose a new password.";
   });
+}
+
+function formatAdminDate(value) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("fr-FR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Europe/Paris"
+  }).format(date);
 }
 
 function renderPasswordReset() {
@@ -1307,6 +1320,27 @@ function renderAdmin() {
     return;
   }
 
+  const adminEmails = (config.adminEmails || []).map((email) => email.toLowerCase());
+  const activityRows = state.authUsers
+    .filter((user) => !adminEmails.includes(String(user.email || "").toLowerCase()))
+    .map((user) => {
+      const approvedRequests = state.requests
+        .filter((request) => request.user_id === user.user_id && request.status === "approved")
+        .sort((a, b) => new Date(b.reviewed_at || 0) - new Date(a.reviewed_at || 0));
+      const approvedProductCount = new Set(approvedRequests.map((request) => request.product_id)).size;
+      const displayName = user.first_name || String(user.email || "").split("@")[0] || "Cliente";
+      return html`
+        <tr>
+          <td><strong>${escapeHtml(displayName)}</strong><small class="admin-user-email">${escapeHtml(user.email || "")}</small></td>
+          <td>${escapeHtml(formatAdminDate(user.account_created_at))}</td>
+          <td><strong class="admin-date">${escapeHtml(formatAdminDate(user.last_sign_in_at))}</strong></td>
+          <td>${escapeHtml(formatAdminDate(approvedRequests[0]?.reviewed_at))}</td>
+          <td><span class="badge ${approvedProductCount ? "unlocked" : "locked"}">${approvedProductCount} produit${approvedProductCount > 1 ? "s" : ""}</span></td>
+        </tr>
+      `;
+    })
+    .join("");
+
   const rows = state.requests
     .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
     .map((request) => {
@@ -1336,7 +1370,19 @@ function renderAdmin() {
     "Admin Dashboard",
     "Compare the request with Etsy, then approve the product access in one click.",
     html`
+      ${state.authAuditReady ? html`
+        <section class="panel admin-activity-panel">
+          <div class="admin-panel-heading"><div><p class="eyebrow">Activité des clientes</p><h2>Connexions & approbations</h2></div><span>${state.authUsers.filter((user) => !adminEmails.includes(String(user.email || "").toLowerCase())).length} comptes clients</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Cliente</th><th>Compte créé</th><th>Dernière connexion</th><th>Dernière approbation</th><th>Accès</th></tr></thead>
+              <tbody>${activityRows || `<tr><td colspan="5"><div class="empty-state">Aucun compte client pour le moment.</div></td></tr>`}</tbody>
+            </table>
+          </div>
+        </section>
+      ` : `<section class="notice admin-audit-notice"><strong>Suivi des connexions à activer</strong><p>La fonction sécurisée Supabase doit être installée une seule fois pour afficher les dernières connexions.</p></section>`}
       <section class="panel">
+        <div class="admin-panel-heading"><div><p class="eyebrow">Gestion des accès</p><h2>Demandes de produits</h2></div></div>
         <div class="table-wrap">
           <table>
             <thead>
@@ -1444,6 +1490,9 @@ async function loadData() {
       .select("*")
       .order("created_at", { ascending: false });
     state.requests = requestResult.data || [];
+    const authResult = await db.rpc("admin_user_signins");
+    state.authUsers = authResult.data || [];
+    state.authAuditReady = !authResult.error;
   } else {
     const requestResult = await db
       .from("access_requests")
@@ -1451,6 +1500,8 @@ async function loadData() {
       .eq("user_id", state.session.user.id)
       .order("created_at", { ascending: false });
     state.requests = requestResult.data || [];
+    state.authUsers = [];
+    state.authAuditReady = true;
   }
 }
 
