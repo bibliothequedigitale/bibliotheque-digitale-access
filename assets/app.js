@@ -2,6 +2,9 @@ const app = document.getElementById("app");
 const authTemplate = document.getElementById("auth-template");
 const signOutButton = document.querySelector("[data-sign-out]");
 const adminLink = document.querySelector("[data-admin-link]");
+const sidebarAccount = document.querySelector("[data-sidebar-account]");
+const profileNameNode = document.querySelector("[data-profile-name]");
+const profileInitialNode = document.querySelector("[data-profile-initial]");
 
 const config = window.BD_CONFIG || {};
 const supabaseReady = Boolean(
@@ -51,6 +54,21 @@ function isAdmin() {
 function setAdminVisibility() {
   if (adminLink) adminLink.hidden = !isAdmin();
   if (signOutButton) signOutButton.hidden = !state.session;
+  if (sidebarAccount) sidebarAccount.hidden = !state.session;
+  document.body.classList.toggle("has-session", Boolean(state.session));
+
+  if (state.session) {
+    const firstName = customerFirstName();
+    if (profileNameNode) profileNameNode.textContent = firstName;
+    if (profileInitialNode) profileInitialNode.textContent = firstName.charAt(0).toUpperCase();
+  }
+
+  const current = route().split("?")[0];
+  document.querySelectorAll(".portal-nav a[href^='#/']").forEach((link) => {
+    const destination = link.getAttribute("href").replace("#", "");
+    const active = destination === current || (destination === "/products" && current.startsWith("/product/"));
+    link.classList.toggle("active", active);
+  });
 }
 
 function route() {
@@ -244,41 +262,116 @@ function renderShell(title, subtitle, body) {
   `;
 }
 
-function renderLibrary() {
+function productCardMarkup(product, compact = false) {
+  const unlocked = hasAccess(product.id);
+  const pending = hasPendingRequest(product.id);
+  const statusBadge = unlocked
+    ? `<span class="badge unlocked">Unlocked</span>`
+    : pending
+      ? `<span class="badge pending">Pending approval</span>`
+      : `<span class="badge locked">Locked</span>`;
+  const action = unlocked
+    ? `<a class="button rose" href="#/product/${escapeHtml(product.slug)}">Open product</a>`
+    : pending
+      ? `<span class="pending-note">We are checking your purchase.</span>`
+      : `<a class="button secondary" href="#/request-access?product=${escapeHtml(product.slug)}">Request access</a>`;
+  const image = productImage(product);
+
+  return html`
+    <article class="card product-card ${compact ? "compact" : ""} ${unlocked ? "" : "locked"}">
+      <div class="product-cover ${image ? "has-image" : "placeholder-cover"}">
+        ${image ? `<img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(product.name)} preview" loading="lazy">` : `<span>BD</span>`}
+        <div class="cover-badge">${statusBadge}</div>
+      </div>
+      <div class="product-card-body">
+        <p class="card-kicker">Digital product</p>
+        <h3>${escapeHtml(product.name)}</h3>
+        <p>${escapeHtml(product.short_description || "")}</p>
+        ${action}
+      </div>
+    </article>
+  `;
+}
+
+function renderDashboard() {
+  const firstName = customerFirstName();
+  const unlockedProducts = state.products.filter((product) => hasAccess(product.id));
+  const pendingProducts = state.products.filter((product) => hasPendingRequest(product.id));
+  const nextProduct = unlockedProducts[0];
+  const primaryAction = nextProduct
+    ? `<a class="button portal-primary" href="#/product/${escapeHtml(nextProduct.slug)}">Continue with my product <span>\u2192</span></a>`
+    : pendingProducts.length
+      ? `<a class="button portal-secondary" href="#/products">View my pending request</a>`
+      : `<a class="button portal-primary" href="#/request-access">Request product access <span>\u2192</span></a>`;
+  const featuredProducts = state.products
+    .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+    .slice(0, 3)
+    .map((product) => productCardMarkup(product, true))
+    .join("");
+
+  app.innerHTML = html`
+    <section class="portal-welcome">
+      <div class="welcome-copy">
+        <p class="eyebrow">Your private customer space</p>
+        <h1>Hello ${escapeHtml(firstName)},<br><em>welcome back.</em></h1>
+        <p>Everything you purchased from Bibliotheque Digitale lives here: your products, guided resources and exclusive bonuses.</p>
+        <div class="welcome-actions">
+          ${primaryAction}
+          <a class="text-link" href="#/profile">Manage my account</a>
+        </div>
+      </div>
+      <div class="welcome-summary">
+        <span class="summary-monogram">${escapeHtml(firstName.charAt(0).toUpperCase())}</span>
+        <p>Member library</p>
+        <strong>${unlockedProducts.length}</strong>
+        <span>product${unlockedProducts.length === 1 ? "" : "s"} unlocked</span>
+        <div class="summary-divider"></div>
+        <small>${pendingProducts.length ? `${pendingProducts.length} request pending` : "All caught up"}</small>
+      </div>
+    </section>
+
+    <section class="portal-section">
+      <div class="section-title-row">
+        <div><p class="eyebrow">Your collection</p><h2>My products</h2></div>
+        <a class="text-link" href="#/products">View all products \u2192</a>
+      </div>
+      <div class="dashboard-products">${featuredProducts}</div>
+    </section>
+
+    <section class="quick-space-grid">
+      <a class="space-card dark" href="#/shop">
+        <span class="space-number">01</span><p class="eyebrow">Coming next</p>
+        <h2>The Digital Shop</h2><p>Discover new planners, business resources and ready-to-use digital products selected for your next idea.</p>
+        <strong>Preview the shop \u2192</strong>
+      </a>
+      <a class="space-card blush" href="#/community">
+        <span class="space-number">02</span><p class="eyebrow">Customer club</p>
+        <h2>A space to feel supported</h2><p>Updates, inspiration and thoughtful guidance around your digital products will soon live here.</p>
+        <strong>Discover the community space \u2192</strong>
+      </a>
+      <a class="space-card paper" href="#/profile">
+        <span class="space-number">03</span><p class="eyebrow">Personal space</p>
+        <h2>My account</h2><p>Keep your first name and account details up to date so your customer space always feels like yours.</p>
+        <strong>Open my profile \u2192</strong>
+      </a>
+    </section>
+
+    <section class="dashboard-aia-teaser">
+      <img src="assets/aia-funnel/aina-editorial-closeup.png" alt="A\u00efna, AI influencer and brand muse" loading="lazy">
+      <div><p class="eyebrow">From digital product to digital presence</p><h2>Ready to give your brand a face?</h2><p>Meet THE A.I.A and discover how an AI influencer can embody your universe, create content and support your business.</p><a class="button aia-button" href="#/discover-the-aia">Meet THE A.I.A</a></div>
+    </section>
+  `;
+}
+
+function renderProductsLibrary() {
   const cards = state.products
     .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
-    .map((product) => {
-      const unlocked = hasAccess(product.id);
-      const pending = hasPendingRequest(product.id);
-      const statusBadge = unlocked
-        ? `<span class="badge unlocked">Unlocked</span>`
-        : pending
-          ? `<span class="badge pending">Pending approval</span>`
-          : `<span class="badge locked">Locked</span>`;
-
-      const action = unlocked
-        ? `<a class="button rose" href="#/product/${escapeHtml(product.slug)}">Open Product</a>`
-        : `<a class="button secondary" href="#/request-access?product=${escapeHtml(product.slug)}">Request access</a>`;
-      const image = productImage(product);
-      const imageMarkup = image
-        ? `<img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(product.name)} preview" loading="lazy">`
-        : "";
-
-      return html`
-        <article class="card ${unlocked ? "" : "locked"}">
-          ${imageMarkup}
-          <div class="badge-row">${statusBadge}<span class="badge">${escapeHtml(product.status || "active")}</span></div>
-          <h3>${escapeHtml(product.name)}</h3>
-          <p>${escapeHtml(product.short_description || "")}</p>
-          ${action}
-        </article>
-      `;
-    })
+    .map((product) => productCardMarkup(product))
     .join("");
 
   renderShell(
-    isAdmin() ? "My Product Library" : `Hello ${customerFirstName()},`,
-    "Access every digital product you purchased from Bibliotheque Digitale. Locked products can be requested after purchase.",
+    "My Product Library",
+    `Hello ${customerFirstName()}. Find every product you purchased, see what is pending and open your exclusive bonuses.`,
     html`
       <section class="grid">${cards}</section>
       <section class="aia-library-bridge">
@@ -826,6 +919,115 @@ async function submitAccessRequest(event) {
   await loadData();
 }
 
+function renderShop() {
+  const salesPage = "https://the-aicon-academy.vercel.app/pages/vente-b.html?utm_source=bibliotheque_digitale&utm_medium=customer_shop&utm_campaign=shop_preview";
+  app.innerHTML = html`
+    <section class="editorial-page-head">
+      <p class="eyebrow">The Digital Shop</p>
+      <h1>Beautiful tools for<br><em>your next idea.</em></h1>
+      <p>A curated boutique of planners, business resources and ready-to-use digital products is being prepared for you.</p>
+    </section>
+    <section class="shop-grid">
+      <article class="shop-card shop-coming">
+        <span class="shop-label">Coming soon</span><div class="shop-art shop-art-one"><span>BD</span></div>
+        <p class="eyebrow">Planners & workbooks</p><h2>Plan beautifully.</h2><p>Thoughtful tools to turn ideas into clear, elegant action plans.</p>
+      </article>
+      <article class="shop-card shop-coming">
+        <span class="shop-label">Coming soon</span><div class="shop-art shop-art-two"><i></i><i></i><i></i></div>
+        <p class="eyebrow">Business resources</p><h2>Create with confidence.</h2><p>Templates and resources designed to make digital creation feel lighter.</p>
+      </article>
+      <article class="shop-card aia-shop-card">
+        <img src="assets/aia-funnel/aina-editorial-full.png" alt="A\u00efna from THE A.I.A" loading="lazy">
+        <div><p class="eyebrow">Featured experience</p><h2>THE A.I.A</h2><p>Create the AI influencer or digital twin that brings your brand to life.</p><a class="button aia-button" href="${salesPage}" target="_blank" rel="noopener">Discover the academy</a></div>
+      </article>
+    </section>
+    <section class="shop-note"><span>✦</span><div><h2>Your customer library and shop will work together.</h2><p>Future purchases can appear directly inside My Products after approval, using the same simple access system.</p></div></section>
+  `;
+}
+
+function renderCommunity() {
+  app.innerHTML = html`
+    <section class="community-preview">
+      <div class="community-orbit"><span>${escapeHtml(customerFirstName().charAt(0))}</span><i></i><i></i><i></i></div>
+      <div>
+        <p class="eyebrow">Bibliotheque Digitale Customer Club</p>
+        <h1>A warm corner for<br><em>creative customers.</em></h1>
+        <p>This future space will bring together product updates, inspiration, helpful ideas and gentle guidance to get more from your digital purchases.</p>
+        <div class="coming-pill">Community opening later</div>
+        <a class="text-link" href="#/library">\u2190 Back to my home</a>
+      </div>
+    </section>
+  `;
+}
+
+function renderProfile() {
+  const firstName = customerFirstName();
+  const email = state.session?.user?.email || "";
+  const createdAt = state.session?.user?.created_at
+    ? new Date(state.session.user.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    : "Member";
+
+  app.innerHTML = html`
+    <section class="profile-page">
+      <div class="profile-identity-card">
+        <span class="profile-avatar-large">${escapeHtml(firstName.charAt(0).toUpperCase())}</span>
+        <p class="eyebrow">My customer profile</p>
+        <h1>${escapeHtml(firstName)}</h1>
+        <p>${escapeHtml(email)}</p>
+        <div class="profile-member-since"><small>Member since</small><strong>${escapeHtml(createdAt)}</strong></div>
+      </div>
+      <div class="profile-settings">
+        <p class="eyebrow">Personal details</p><h2>Make this space yours.</h2>
+        <p>Your first name appears in your welcome message and throughout your customer space.</p>
+        <form data-profile-form>
+          <label>First name
+            <input name="first_name" type="text" autocomplete="given-name" required maxlength="60" value="${escapeHtml(firstName === "There" ? "" : firstName)}">
+          </label>
+          <label>Email address
+            <input type="email" value="${escapeHtml(email)}" disabled>
+          </label>
+          <button type="submit" class="rose">Save my profile</button>
+          <p class="form-note" data-profile-message></p>
+        </form>
+        <div class="profile-access-summary">
+          <div><strong>${state.access.length}</strong><span>Unlocked products</span></div>
+          <div><strong>${state.requests.filter((item) => item.status === "pending").length}</strong><span>Pending requests</span></div>
+        </div>
+      </div>
+    </section>
+  `;
+
+  app.querySelector("[data-profile-form]").addEventListener("submit", saveCustomerProfile);
+}
+
+async function saveCustomerProfile(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const message = form.querySelector("[data-profile-message]");
+  const firstName = String(new FormData(form).get("first_name") || "").trim();
+  const button = form.querySelector('button[type="submit"]');
+
+  if (!firstName) {
+    message.textContent = "Please enter your first name.";
+    return;
+  }
+
+  button.disabled = true;
+  message.textContent = "Saving...";
+  const { data, error } = await db.auth.updateUser({ data: { first_name: firstName } });
+  button.disabled = false;
+
+  if (error) {
+    message.textContent = error.message;
+    return;
+  }
+
+  if (data.user && state.session) state.session.user = data.user;
+  setAdminVisibility();
+  message.textContent = `Saved. Hello ${firstName}!`;
+  window.setTimeout(() => renderProfile(), 700);
+}
+
 function renderAdmin() {
   if (!isAdmin()) {
     renderShell(
@@ -1004,15 +1206,16 @@ async function renderRoute() {
   setAdminVisibility();
 
   const current = route().split("?")[0];
-  if (current === "/library" && shouldStartWithAccessRequest()) {
-    renderRequestAccess();
-    return;
-  }
   if (current.startsWith("/product/")) renderProductPage(current.replace("/product/", ""));
+  else if (current === "/library") renderDashboard();
+  else if (current === "/products") renderProductsLibrary();
   else if (current === "/request-access") renderRequestAccess();
+  else if (current === "/shop") renderShop();
+  else if (current === "/community") renderCommunity();
+  else if (current === "/profile") renderProfile();
   else if (current === "/admin") renderAdmin();
   else if (current === "/discover-the-aia") renderDiscoverAia();
-  else renderLibrary();
+  else renderDashboard();
 }
 
 async function init() {

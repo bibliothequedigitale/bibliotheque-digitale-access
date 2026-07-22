@@ -5,20 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>Bibliotheque Digitale Customer Library</title>
-  <link rel="stylesheet" href="assets/styles.css?v=20260721-student-storage-fix">
+  <link rel="stylesheet" href="assets/styles.css?v=20260722-client-portal-v2">
 </head>
 <body>
-  <header class="topbar">
+  <header class="topbar" data-app-navigation>
     <a class="brand" href="#/library" aria-label="Bibliotheque Digitale home">
       <span>BD</span>
-      <strong>Bibliotheque Digitale</strong>
+      <strong>Bibliotheque<br>Digitale</strong>
     </a>
-    <nav>
-      <a href="#/library">My Library</a>
-      <a href="#/request-access">Request Access</a>
-      <a href="#/admin" data-admin-link hidden>Admin</a>
-      <button class="ghost" type="button" data-sign-out hidden>Sign out</button>
+    <nav class="portal-nav" aria-label="Customer portal">
+      <a href="#/library"><b>01</b><span>Home</span></a>
+      <a href="#/products"><b>02</b><span>My products</span></a>
+      <a href="#/shop"><b>03</b><span>Shop</span><em>Soon</em></a>
+      <a href="#/community"><b>04</b><span>Community</span><em>Soon</em></a>
+      <a href="#/profile"><b>05</b><span>My account</span></a>
+      <a href="#/request-access"><b>+</b><span>Request access</span></a>
+      <a href="#/admin" data-admin-link hidden><b>A</b><span>Admin</span></a>
     </nav>
+    <div class="sidebar-account" data-sidebar-account hidden>
+      <a href="#/profile" class="sidebar-profile">
+        <span class="profile-initial" data-profile-initial>BD</span>
+        <span><small>Signed in as</small><strong data-profile-name>Customer</strong></span>
+      </a>
+      <button class="ghost" type="button" data-sign-out hidden>Sign out</button>
+    </div>
   </header>
 
   <main id="app" class="app-shell" aria-live="polite"></main>
@@ -84,6 +94,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-config.js?v=20260511-secure-product-design-v2"></script>
-  <script src="assets/app.js?v=20260722-personal-welcome"></script>
+  <script src="assets/app.js?v=20260722-client-portal-v2"></script>
 </body>
 </html>
