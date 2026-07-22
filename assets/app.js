@@ -34,14 +34,6 @@ const fallbackProducts = [
     short_description: "A4, A5, and US Letter planner files with bonus strategy resources.",
     status: "active",
     display_order: 1
-  },
-  {
-    id: "faceless-photo-pack",
-    slug: "faceless-photo-pack",
-    name: "Faceless Photo Pack",
-    short_description: "Coming soon. This product will unlock here after purchase.",
-    status: "coming_soon",
-    display_order: 2
   }
 ];
 
@@ -1235,7 +1227,8 @@ async function loadData() {
     .from("products")
     .select("*")
     .order("display_order", { ascending: true });
-  state.products = productResult.data?.length ? productResult.data : fallbackProducts;
+  state.products = (productResult.data?.length ? productResult.data : fallbackProducts)
+    .filter((product) => product.slug !== "faceless-photo-pack");
 
   const accessResult = await db
     .from("user_products")
