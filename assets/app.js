@@ -639,21 +639,18 @@ function renderBrandingPlannerProduct(product, files) {
             <a class="button secondary" href="#bonus-library">Bonuses</a>
           </div>
         </div>
-        <div class="product-scene" aria-hidden="true">
-          <div class="planner-stack">
-            <div class="planner-sheet">
-              <strong>A5 Planner</strong>
-              <p>Compact format for smaller printable workbooks.</p>
-            </div>
-            <div class="planner-sheet">
-              <strong>Branding Planner & Workbook</strong>
-              <p>Brand foundation, positioning, visual identity, content direction, and launch planning.</p>
-            </div>
-            <div class="planner-sheet">
-              <strong>US Letter</strong>
-              <p>Ready for standard digital product buyers.</p>
-            </div>
-          </div>
+        <div class="product-video-showcase">
+          <video
+            controls
+            playsinline
+            preload="metadata"
+            poster="assets/shop/plr/branding-planner-hd.png"
+            aria-label="Branding Planner and Workbook PLR presentation video"
+          >
+            <source src="assets/media/video-branding-planner-plr.mp4" type="video/mp4">
+            Your browser does not support this presentation video.
+          </video>
+          <p>Discover everything included in your Branding Planner & Workbook PLR pack.</p>
         </div>
       </div>
     </section>

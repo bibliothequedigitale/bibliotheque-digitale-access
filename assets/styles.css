@@ -1421,6 +1421,31 @@ body.public-site { background: #fbf5f1; }
   .bd-values { grid-template-columns:repeat(2,1fr); }
   .bd-freebie-visual { min-height:780px; max-height:920px; }
 }
+
+.product-video-showcase {
+  overflow: hidden;
+  border: 1px solid rgba(92, 38, 56, .2);
+  border-radius: 14px;
+  background: #201416;
+  box-shadow: 0 22px 44px rgba(61, 27, 35, .18);
+}
+
+.product-video-showcase video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #160e10;
+}
+
+.product-video-showcase p {
+  margin: 0;
+  padding: 13px 16px;
+  color: rgba(255, 255, 255, .8);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
 .admin-date { color:#5d2940; white-space:nowrap; font-size:12px; }
 .admin-audit-notice { margin-bottom:18px; }
 .admin-activity-panel { margin-bottom:22px; }
