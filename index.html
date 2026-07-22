@@ -118,8 +118,19 @@
           <label>Password
             <input name="password" type="password" autocomplete="current-password" required minlength="6">
           </label>
+          <button class="auth-text-link" type="button" data-forgot-password>Forgot your password?</button>
           <button type="submit">Sign in</button>
           <p class="form-note" data-auth-message></p>
+
+          <div class="password-recovery-request" data-password-recovery-request hidden>
+            <div class="recovery-divider"><span>Reset password</span></div>
+            <p>Enter your email address. We will send you a secure link to choose a new password.</p>
+            <label>Email
+              <input name="recovery_email" type="email" autocomplete="email">
+            </label>
+            <button class="rose" type="button" data-send-recovery>Send reset link</button>
+            <p class="form-note" data-recovery-message></p>
+          </div>
         </form>
       </div>
     </section>
@@ -127,6 +138,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-config.js?v=20260511-secure-product-design-v2"></script>
-  <script src="assets/app.js?v=20260722-seo-banner"></script>
+  <script src="assets/app.js?v=20260722-password-recovery"></script>
 </body>
 </html>

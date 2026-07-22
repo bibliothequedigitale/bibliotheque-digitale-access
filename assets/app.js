@@ -28,6 +28,8 @@ const state = {
   profile: null
 };
 
+let passwordRecoveryMode = false;
+
 const fallbackProducts = [
   {
     id: "branding-planner-plr",
@@ -130,6 +132,11 @@ function renderAuth(message = "") {
   app.replaceChildren(fragment);
   const form = app.querySelector("[data-auth-form]");
   const messageNode = app.querySelector("[data-auth-message]");
+  const forgotPasswordButton = app.querySelector("[data-forgot-password]");
+  const recoveryPanel = app.querySelector("[data-password-recovery-request]");
+  const recoveryEmail = app.querySelector('[name="recovery_email"]');
+  const sendRecoveryButton = app.querySelector("[data-send-recovery]");
+  const recoveryMessage = app.querySelector("[data-recovery-message]");
   messageNode.textContent = message;
 
   const onboardingForm = app.querySelector("[data-onboarding-form]");
@@ -165,6 +172,86 @@ function renderAuth(message = "") {
   });
 
   onboardingForm.addEventListener("submit", submitOnboardingRequest);
+
+  forgotPasswordButton.addEventListener("click", () => {
+    recoveryPanel.hidden = !recoveryPanel.hidden;
+    forgotPasswordButton.textContent = recoveryPanel.hidden ? "Forgot your password?" : "Close password reset";
+    if (!recoveryPanel.hidden) {
+      recoveryEmail.value = form.querySelector('[name="email"]').value;
+      recoveryEmail.focus();
+    }
+  });
+
+  sendRecoveryButton.addEventListener("click", async () => {
+    const email = recoveryEmail.value.trim();
+    if (!email) {
+      recoveryMessage.textContent = "Please enter your email address.";
+      return;
+    }
+
+    sendRecoveryButton.disabled = true;
+    recoveryMessage.textContent = "Sending your secure link...";
+    const redirectTo = `${window.location.origin}${window.location.pathname}`;
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo });
+    sendRecoveryButton.disabled = false;
+
+    recoveryMessage.textContent = error
+      ? error.message
+      : "Email sent. Check your inbox and spam folder, then click the link to choose a new password.";
+  });
+}
+
+function renderPasswordReset() {
+  setAdminVisibility();
+  app.innerHTML = html`
+    <section class="password-reset-shell">
+      <div class="password-reset-card">
+        <p class="eyebrow">Secure customer access</p>
+        <h1>Choose your new password</h1>
+        <p>Create a password of at least 8 characters, then return to your Bibliothèque Digitale space.</p>
+        <form data-new-password-form>
+          <label>New password
+            <input name="new_password" type="password" autocomplete="new-password" minlength="8" required>
+          </label>
+          <label>Confirm new password
+            <input name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
+          </label>
+          <button class="rose full-button" type="submit">Save my new password</button>
+          <p class="form-note" data-new-password-message></p>
+        </form>
+      </div>
+    </section>
+  `;
+
+  const form = app.querySelector("[data-new-password-form]");
+  const message = app.querySelector("[data-new-password-message]");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const password = String(data.get("new_password") || "");
+    const confirmation = String(data.get("confirm_password") || "");
+    if (password !== confirmation) {
+      message.textContent = "The two passwords do not match.";
+      return;
+    }
+
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    message.textContent = "Saving...";
+    const { error } = await db.auth.updateUser({ password });
+    button.disabled = false;
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    passwordRecoveryMode = false;
+    message.textContent = "Your password has been updated. Opening your customer space...";
+    window.setTimeout(() => {
+      location.hash = "#/library";
+      renderRoute();
+    }, 900);
+  });
 }
 
 async function submitOnboardingRequest(event) {
@@ -1021,7 +1108,7 @@ function renderInteractiveShop() {
   const shopProducts = [
     { category: "instagram", label: "Instagram & Canva", title: "100 modèles de Stories Instagram", description: "Un pack de stories faceless et business à personnaliser dans Canva pour publier plus rapidement.", badge: "Canva editable", image: "assets/shop/plr/stories-instagram.jpg" },
     { category: "instagram", label: "Instagram & Canva", title: "138 maquettes de profils Instagram", description: "Des maquettes de profils, feeds, Reels et stories pour présenter une identité Instagram professionnelle.", badge: "Pack créateur", image: "assets/shop/plr/profils-instagram.jpg" },
-    { category: "faceless", label: "Visuels faceless", title: "2 200 photos faceless", description: "Une vaste collection de visuels esthétiques pour créer du contenu, des produits digitaux et des campagnes sans visage.", badge: "Grande collection", image: "assets/shop/plr/photos-faceless.jpg" },
+    { category: "faceless", label: "Photos faceless", title: "2 200 photos faceless", description: "Une vaste collection de photos esthétiques pour créer du contenu, des produits digitaux et des campagnes sans montrer son visage.", badge: "Spécialité BD", image: "assets/shop/plr/photos-faceless.jpg" },
     { category: "instagram", label: "Instagram & Canva", title: "50 stories spirituelles", description: "Une collection de stories inspirantes pour les univers spirituels, bien-être et développement personnel.", badge: "Collection PLR", image: "assets/logo-bibliotheque-digitale.jpg" },
     { category: "planners", label: "Planners & bien-être", title: "Beauty Planner", description: "Un planificateur beauté élégant à personnaliser pour organiser routines, soins et objectifs bien-être.", badge: "Planner", image: "assets/shop/plr/beauty-planner.png" },
     { category: "business", label: "Branding & business", title: "Branding Planner & Workbook PLR", description: "Un système complet pour définir une identité de marque, son positionnement, ses couleurs et sa stratégie.", badge: "Formation premium", image: "assets/shop/plr/branding-planner.png" },
@@ -1065,7 +1152,7 @@ function renderInteractiveShop() {
       <a class="store-hero-card" href="${etsyShop}" target="_blank" rel="noopener"><span>Découvrir la collection complète</span><strong>Visiter la boutique Etsy</strong><em>\u2197</em></a>
     </section>
     <section class="store-controls" aria-label="Shop filters">
-      <div class="store-filter-row"><button class="store-filter active" type="button" data-shop-filter="all">Tous les produits</button><button class="store-filter" type="button" data-shop-filter="marketing">Marketing</button><button class="store-filter" type="button" data-shop-filter="instagram">Instagram & Canva</button><button class="store-filter" type="button" data-shop-filter="faceless">Visuels faceless</button><button class="store-filter" type="button" data-shop-filter="business">Business & Etsy</button><button class="store-filter" type="button" data-shop-filter="planners">Planners & Mindset</button><button class="store-filter" type="button" data-shop-filter="seasonal">Saisonnier</button></div>
+      <div class="store-filter-row"><button class="store-filter active" type="button" data-shop-filter="all">Tous les produits</button><button class="store-filter faceless-filter" type="button" data-shop-filter="faceless">📸 Photos faceless</button><button class="store-filter" type="button" data-shop-filter="marketing">Marketing</button><button class="store-filter" type="button" data-shop-filter="instagram">Instagram & Canva</button><button class="store-filter" type="button" data-shop-filter="business">Business & Etsy</button><button class="store-filter" type="button" data-shop-filter="planners">Planners & Mindset</button><button class="store-filter" type="button" data-shop-filter="seasonal">Saisonnier</button></div>
       <label class="store-search"><span>Rechercher dans la Bibliothèque</span><input type="search" placeholder="Canva, faceless, planner..." data-shop-search></label>
     </section>
     <div class="store-results-line"><strong data-shop-count>${shopProducts.length}</strong> produits de la Bibliothèque <span>\u00b7 De nouvelles collections seront ajoutées régulièrement</span></div>
@@ -1351,6 +1438,11 @@ async function loadData() {
 async function renderRoute() {
   setAdminVisibility();
 
+  if (passwordRecoveryMode) {
+    renderPasswordReset();
+    return;
+  }
+
   if (!supabaseReady) {
     app.innerHTML = html`
       <section class="notice">
@@ -1409,8 +1501,13 @@ signOutButton?.addEventListener("click", async () => {
 window.addEventListener("hashchange", renderRoute);
 
 if (db) {
-  db.auth.onAuthStateChange((_event, session) => {
+  db.auth.onAuthStateChange((event, session) => {
     state.session = session;
+    if (event === "PASSWORD_RECOVERY") {
+      passwordRecoveryMode = true;
+      renderPasswordReset();
+      return;
+    }
     renderRoute();
   });
 }

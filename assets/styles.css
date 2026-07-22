@@ -313,6 +313,18 @@ button.danger { background: #8b3838; }
 .signin-panel { box-shadow: none; }
 .signin-panel h3 { font-size: 23px; }
 .signin-panel button { margin-top: 10px; }
+.auth-text-link { width: fit-content; margin: -2px 0 2px; padding: 0; border: 0; background: transparent; color: var(--rose-dark); text-decoration: underline; font-size: 13px; font-weight: 700; box-shadow: none; }
+.auth-text-link:hover { background: transparent; color: #2d1118; transform: none; }
+.password-recovery-request[hidden] { display: none; }
+.password-recovery-request { margin-top: 12px; padding-top: 4px; }
+.password-recovery-request > p { margin: 8px 0 14px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.recovery-divider { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--rose-dark); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.recovery-divider::before, .recovery-divider::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+.password-reset-shell { min-height: 70vh; display: grid; place-items: center; padding: 36px 18px; }
+.password-reset-card { width: min(560px, 100%); padding: clamp(28px, 5vw, 54px); border: 1px solid var(--line); border-radius: 28px; background: linear-gradient(145deg, #fffaf8, #f8e4e7); box-shadow: 0 28px 70px rgba(78, 31, 43, .13); }
+.password-reset-card h1 { margin: 10px 0 12px; font-size: clamp(36px, 6vw, 58px); line-height: .95; }
+.password-reset-card > p { color: var(--muted); line-height: 1.65; }
+.password-reset-card form { display: grid; gap: 14px; margin-top: 24px; }
 .optional { color: var(--muted); font-weight: 400; }
 .full-button { width: 100%; text-align: center; }
 button:disabled { cursor: wait; opacity: .65; }
@@ -1245,6 +1257,7 @@ body.has-session .app-shell {
 .store-filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
 .store-filter { flex: 0 0 auto; margin: 0; padding: 10px 13px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: transparent; font-size: 11px; }
 .store-filter:hover, .store-filter.active { color: #fff; border-color: #3a1e22; background: #3a1e22; }
+.store-filter.faceless-filter:not(.active) { color: #702e47; border-color: #d99bad; background: linear-gradient(135deg, #fff3f5, #f3d4dc); font-weight: 800; }
 .store-search { position: relative; margin: 0; }
 .store-search span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 .store-search input { margin: 0; padding: 11px 14px 11px 38px; border-radius: 999px; background: #fff; }
