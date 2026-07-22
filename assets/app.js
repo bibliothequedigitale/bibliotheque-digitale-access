@@ -95,7 +95,7 @@ function escapeHtml(value = "") {
 
 function productImage(product) {
   const images = {
-    "branding-planner-plr": "assets/branding-planner-preview.png"
+    "branding-planner-plr": "assets/shop/plr/branding-planner-hd.png"
   };
   return images[product.slug] || "";
 }
@@ -1064,7 +1064,7 @@ function renderPublicHome() {
       <div class="bd-hero-collage" aria-label="Sélection de produits Bibliothèque Digitale">
         <figure class="bd-cover-main"><img src="assets/shop/faceless-guide.jpg" alt="Guide marketing faceless PLR"><figcaption>Créer · personnaliser · revendre</figcaption></figure>
         <figure class="bd-cover-small top"><img src="assets/shop/canva-course.jpg" alt="Formation Canva avec licence PLR"></figure>
-        <figure class="bd-cover-small bottom"><img src="assets/branding-planner-preview.png" alt="Branding Planner et Workbook PLR"></figure>
+        <figure class="bd-cover-small bottom"><img src="assets/shop/plr/branding-planner-hd.png" alt="Branding Planner et Workbook PLR"></figure>
         <span class="bd-seal">PLR<br>Premium</span>
       </div>
     </section>
@@ -1146,7 +1146,7 @@ function renderInteractiveShop() {
     { category: "instagram", label: "Instagram & Canva", title: "138 maquettes de profils Instagram", description: "Des maquettes de profils, feeds, Reels et stories pour présenter une identité Instagram professionnelle.", badge: "Pack créateur", image: "assets/shop/plr/profils-instagram.jpg?v=20260722-2" },
     { category: "faceless", label: "Photos faceless", title: "2 200 photos faceless", description: "Une vaste collection de photos esthétiques pour créer du contenu, des produits digitaux et des campagnes sans montrer son visage.", badge: "Spécialité BD", image: "assets/shop/plr/photos-faceless.jpg?v=20260722-2" },
     { category: "planners", label: "Planners & bien-être", title: "Beauty Planner", description: "Un planificateur beauté élégant à personnaliser pour organiser routines, soins et objectifs bien-être.", badge: "Planner", image: "assets/shop/plr/beauty-planner.png" },
-    { category: "business", label: "Branding & business", title: "Branding Planner & Workbook PLR", description: "Un système complet pour définir une identité de marque, son positionnement, ses couleurs et sa stratégie.", badge: "Formation premium", image: "assets/shop/plr/branding-planner.png" },
+    { category: "business", label: "Branding & business", title: "Branding Planner & Workbook PLR", description: "Un système complet pour définir une identité de marque, son positionnement, ses couleurs et sa stratégie.", badge: "Formation premium", image: "assets/shop/plr/branding-planner-hd.png" },
     { category: "business", label: "Templates business", title: "Business Newspaper", description: "Un modèle de journal éditorial Canva pour raconter une marque, annoncer un lancement ou présenter une offre.", badge: "Choix éditorial", image: "assets/shop/plr/business-newspaper.jpg" },
     { category: "instagram", label: "Instagram & Canva", title: "Carrousels aesthetic scrapbook & stickers", description: "Des carrousels et stories façon scrapbook rose, accompagnés d’éléments et stickers coordonnés.", badge: "Aesthetic pack", image: "assets/shop/plr/carousel-scrapbook.png?v=20260722-2" },
     { category: "seasonal", label: "Collections saisonnières", title: "Cliparts de Noël aquarelle", description: "Une collection de cliparts de Noël en PNG pour planners, cartes, décorations et produits digitaux.", badge: "Collection Noël", image: "assets/shop/plr/clipart-noel.jpg" },
