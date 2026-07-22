@@ -474,7 +474,7 @@ function renderProductsLibrary() {
     "My Product Library",
     `Hello ${customerFirstName()}. Find every product you purchased, see what is pending and open your exclusive bonuses.`,
     html`
-      <section class="grid">${cards}</section>
+      <section class="grid product-library-grid${state.products.length === 1 ? " single-product" : ""}">${cards}</section>
       <section class="aia-library-bridge">
         <div class="aia-library-image">
           <img src="assets/aia-funnel/aina-editorial-closeup.png" alt="Aïna embodying a premium editorial brand" loading="lazy">

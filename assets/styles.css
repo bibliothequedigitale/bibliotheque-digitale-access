@@ -194,6 +194,16 @@ h3 { font-size: 26px; }
   box-shadow: 0 14px 24px rgba(69, 35, 30, .12);
 }
 
+/* Keep detailed product artwork large and crisp when a member owns one item. */
+.product-library-grid.single-product {
+  grid-template-columns: minmax(0, 720px);
+}
+.product-library-grid.single-product .product-image {
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #f9e7d8;
+}
+
 .card.locked {
   opacity: .78;
   background: linear-gradient(180deg, #fffdf9, #f2e8e1);
@@ -1270,6 +1280,7 @@ body.has-session .app-shell {
 .store-product:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(69,35,30,.15); }
 .store-product-visual { position: relative; aspect-ratio: 1 / .92; overflow: hidden; background: #ead6cf; }
 .store-product-visual img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
+.store-product-visual img[src*="branding-planner-hd"] { object-fit: contain; background: #f9e7d8; }
 .store-product:hover .store-product-visual img { transform: scale(1.04); }
 .store-product-badge { position: absolute; top: 14px; left: 14px; padding: 7px 10px; border-radius: 999px; color: #fff; background: rgba(37,17,20,.86); font-size: 9px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(8px); }
 .store-favorite { position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 38px; height: 38px; margin: 0; padding: 0; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; color: #8c3f4e; background: rgba(255,255,255,.86); font-size: 22px; line-height: 1; box-shadow: 0 8px 20px rgba(40,15,20,.12); }
