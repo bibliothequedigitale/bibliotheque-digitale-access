@@ -59,7 +59,7 @@ function setAdminVisibility() {
 
   if (state.session) {
     const firstName = customerFirstName();
-    if (profileNameNode) profileNameNode.textContent = firstName;
+    if (profileNameNode) profileNameNode.textContent = `${firstName} 👋`;
     if (profileInitialNode) profileInitialNode.textContent = firstName.charAt(0).toUpperCase();
   }
 
@@ -313,7 +313,7 @@ function renderDashboard() {
     <section class="portal-welcome">
       <div class="welcome-copy">
         <p class="eyebrow">Your private customer space</p>
-        <h1>Hello ${escapeHtml(firstName)},<br><em>welcome back.</em></h1>
+        <h1>Hello ${escapeHtml(firstName)} 👋<br><em>welcome back.</em></h1>
         <p>Everything you purchased from Bibliotheque Digitale lives here: your products, guided resources and exclusive bonuses.</p>
         <div class="welcome-actions">
           ${primaryAction}
@@ -945,6 +945,81 @@ function renderShop() {
   `;
 }
 
+function renderInteractiveShop() {
+  const etsyShop = "https://www.etsy.com/shop/BibliothequeDigitale";
+  const shopProducts = [
+    { category: "marketing", label: "Business & Marketing", title: "Complete Faceless Marketing Guide", description: "A ready-to-use French guide with PLR rights to build and resell a faceless marketing offer.", price: "From \u20ac6.47", oldPrice: "\u20ac21.56", badge: "Bestseller style", image: "assets/shop/faceless-guide.jpg", query: "faceless marketing guide" },
+    { category: "canva", label: "Canva & Instagram", title: "Accelerated Canva Course", description: "A beginner-friendly Canva course with tutorials, bonuses and PLR resale rights.", price: "From \u20ac4.68", oldPrice: "\u20ac15.59", badge: "Customer favorite", image: "assets/shop/canva-course.jpg", query: "cours Canva" },
+    { category: "faceless", label: "Faceless Photos & Videos", title: "Summer Paradise Collection", description: "150+ pastel and tropical faceless images for Instagram, Pinterest and digital products.", price: "From \u20ac2.51", oldPrice: "\u20ac8.36", badge: "Trending", image: "assets/shop/tropical-stock.jpg", query: "summer paradise faceless" },
+    { category: "faceless", label: "Faceless Photos & Videos", title: "Melanin Faceless Collection", description: "A premium visual library created for elegant, inclusive and high-converting content.", price: "From \u20ac3.60", oldPrice: "\u20ac11.99", badge: "Inclusive collection", image: "assets/shop/melanin-stock.jpg", query: "melanin faceless" },
+    { category: "canva", label: "Canva & Instagram", title: "100 Instagram Story Templates", description: "Faceless business stories ready to customize in Canva and use for selling with ease.", price: "From \u20ac2.88", oldPrice: "\u20ac9.59", badge: "Ready to edit", image: "assets/shop/instagram-stories.jpg", query: "Instagram story templates" },
+    { category: "canva", label: "Canva & Instagram", title: "138 Instagram Profile Mockups", description: "Create polished feed previews and professional Instagram presentations in minutes.", price: "Discover on Etsy", oldPrice: "", badge: "Creator toolkit", image: "assets/shop/instagram-profile.jpg", query: "Instagram profile mockup" },
+    { category: "business", label: "Business Templates", title: "Business Newspaper Template", description: "An editorial Canva newspaper template for launches, brand stories and client announcements.", price: "Discover on Etsy", oldPrice: "", badge: "Editorial pick", image: "assets/shop/business-newspaper.jpg", query: "business newspaper" },
+    { category: "mindset", label: "Mindset & Planners", title: "Manifestation & Law of Attraction Pack", description: "Planners, journals and affirmations bundled into one uplifting PLR collection.", price: "From \u20ac5.76", oldPrice: "\u20ac19.19", badge: "Complete bundle", image: "assets/shop/manifestation-pack.jpg", query: "manifestation loi attraction" }
+  ];
+  const productsMarkup = shopProducts.map((product) => {
+    const url = `${etsyShop}?search_query=${encodeURIComponent(product.query)}`;
+    return html`
+      <article class="store-product" data-shop-product data-category="${escapeHtml(product.category)}" data-search="${escapeHtml(`${product.title} ${product.label}`.toLowerCase())}">
+        <div class="store-product-visual">
+          <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.title)}" loading="lazy">
+          <span class="store-product-badge">${escapeHtml(product.badge)}</span>
+          <button class="store-favorite" type="button" aria-label="Add ${escapeHtml(product.title)} to favorites" aria-pressed="false" data-shop-favorite>\u2661</button>
+          <a class="store-quick-view" href="${url}" target="_blank" rel="noopener">View on Etsy \u2197</a>
+        </div>
+        <div class="store-product-copy"><p class="store-category">${escapeHtml(product.label)}</p><h2>${escapeHtml(product.title)}</h2><p>${escapeHtml(product.description)}</p><div class="store-price"><strong>${escapeHtml(product.price)}</strong>${product.oldPrice ? `<del>${escapeHtml(product.oldPrice)}</del>` : ""}</div></div>
+      </article>`;
+  }).join("");
+
+  app.innerHTML = html`
+    <section class="store-hero">
+      <div><p class="eyebrow">Bibliotheque Digitale Shop</p><h1>Create, launch<br><em>& grow beautifully.</em></h1><p>Explore a curated selection of digital products designed for ambitious creators: PLR resources, faceless visuals, Canva templates and business tools.</p><div class="store-proof"><span><strong>678+</strong> Etsy sales</span><span><strong>4.8</strong> customer rating</span><span><strong>Instant</strong> digital download</span></div></div>
+      <a class="store-hero-card" href="${etsyShop}" target="_blank" rel="noopener"><span>Visit the complete collection</span><strong>Shop all products on Etsy</strong><em>\u2197</em></a>
+    </section>
+    <section class="store-controls" aria-label="Shop filters">
+      <div class="store-filter-row"><button class="store-filter active" type="button" data-shop-filter="all">All products</button><button class="store-filter" type="button" data-shop-filter="marketing">Business & Marketing</button><button class="store-filter" type="button" data-shop-filter="canva">Canva & Instagram</button><button class="store-filter" type="button" data-shop-filter="faceless">Faceless Photos & Videos</button><button class="store-filter" type="button" data-shop-filter="business">Business Templates</button><button class="store-filter" type="button" data-shop-filter="mindset">Mindset & Planners</button></div>
+      <label class="store-search"><span>Search the shop</span><input type="search" placeholder="Try Canva, faceless, planner..." data-shop-search></label>
+    </section>
+    <div class="store-results-line"><strong data-shop-count>${shopProducts.length}</strong> curated products <span>\u00b7 New collections will be added regularly</span></div>
+    <section class="store-grid" data-shop-grid>${productsMarkup}</section>
+    <div class="store-empty" data-shop-empty hidden><span>\u2726</span><h2>No product found yet.</h2><p>Try another category or visit the complete Etsy boutique.</p></div>
+    <section class="store-footer-cta"><div><p class="eyebrow">The complete Bibliotheque</p><h2>More than a shop.<br>A library for your ideas.</h2><p>Browse the full Etsy collection for ebooks, planners, templates, stock photos, videos, mockups and ready-to-resell PLR products.</p></div><a class="button portal-primary" href="${etsyShop}" target="_blank" rel="noopener">Explore all products on Etsy \u2197</a></section>
+  `;
+  bindShopInteractions();
+}
+
+function bindShopInteractions() {
+  const filters = [...app.querySelectorAll("[data-shop-filter]")];
+  const products = [...app.querySelectorAll("[data-shop-product]")];
+  const search = app.querySelector("[data-shop-search]");
+  const count = app.querySelector("[data-shop-count]");
+  const empty = app.querySelector("[data-shop-empty]");
+  let activeCategory = "all";
+  const update = () => {
+    const term = String(search.value || "").trim().toLowerCase();
+    let visible = 0;
+    products.forEach((product) => {
+      const matchesCategory = activeCategory === "all" || product.dataset.category === activeCategory;
+      const matchesSearch = !term || product.dataset.search.includes(term);
+      product.hidden = !(matchesCategory && matchesSearch);
+      if (!product.hidden) visible += 1;
+    });
+    count.textContent = String(visible);
+    empty.hidden = visible !== 0;
+  };
+  filters.forEach((filter) => filter.addEventListener("click", () => {
+    activeCategory = filter.dataset.shopFilter;
+    filters.forEach((item) => item.classList.toggle("active", item === filter));
+    update();
+  }));
+  search.addEventListener("input", update);
+  app.querySelectorAll("[data-shop-favorite]").forEach((button) => button.addEventListener("click", () => {
+    const selected = button.getAttribute("aria-pressed") === "true";
+    button.setAttribute("aria-pressed", String(!selected));
+    button.textContent = selected ? "\u2661" : "\u2665";
+  }));
+}
+
 function renderCommunity() {
   app.innerHTML = html`
     <section class="community-preview">
@@ -1210,7 +1285,7 @@ async function renderRoute() {
   else if (current === "/library") renderDashboard();
   else if (current === "/products") renderProductsLibrary();
   else if (current === "/request-access") renderRequestAccess();
-  else if (current === "/shop") renderShop();
+  else if (current === "/shop") renderInteractiveShop();
   else if (current === "/community") renderCommunity();
   else if (current === "/profile") renderProfile();
   else if (current === "/admin") renderAdmin();
