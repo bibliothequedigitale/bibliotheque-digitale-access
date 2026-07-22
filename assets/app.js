@@ -919,7 +919,7 @@ function renderPublicHome() {
   const launchMap = "https://shop.beacons.ai/aina_icon/e65f7d06-4739-4cc0-9b1f-c48b499e5f97";
   app.innerHTML = html`
     <section class="bd-brand-banner" aria-label="Bibliothèque Digitale, boutique de produits digitaux PLR premium">
-      <img src="assets/banniere-bibliotheque-digitale.png" alt="Bibliothèque Digitale par Cécilia : produits digitaux premium sous licence PLR, templates Canva, visuels IA et ressources pour développer un business faceless">
+      <img src="assets/banniere-bibliotheque-digitale-qr.png" alt="Bibliothèque Digitale par Cécilia : produits digitaux premium sous licence PLR, templates Canva, visuels IA et ressources pour développer un business faceless">
       <a href="${launchMap}" target="_blank" rel="noopener" aria-label="Télécharger gratuitement The A.I.A Launch Map">Recevoir ma Launch Map gratuite <span>↗</span></a>
     </section>
     <section class="bd-home-hero">
