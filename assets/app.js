@@ -1010,6 +1010,28 @@ async function submitAccessRequest(event) {
 function renderPublicHome() {
   const etsyShop = "https://www.etsy.com/shop/BibliothequeDigitale";
   const launchMap = "https://shop.beacons.ai/aina_icon/e65f7d06-4739-4cc0-9b1f-c48b499e5f97";
+  const publicProducts = [
+    { category: "Photos faceless", title: "2 200 photos faceless", badge: "Spécialité BD", image: "assets/shop/plr/photos-faceless.jpg?v=20260722-2" },
+    { category: "Instagram & Canva", title: "138 maquettes de profils Instagram", badge: "Pack créateur", image: "assets/shop/plr/profils-instagram.jpg?v=20260722-2" },
+    { category: "Instagram & Canva", title: "Carrousels aesthetic scrapbook & stickers", badge: "Aesthetic pack", image: "assets/shop/plr/carousel-scrapbook.png?v=20260722-2" },
+    { category: "Marketing digital", title: "Ebook Comment vendre en Story", badge: "Guide pratique", image: "assets/shop/plr/vendre-story.jpg?v=20260722-2" },
+    { category: "Etsy & produits digitaux", title: "Guide Etsy Produits Digitaux", badge: "Système Etsy", image: "assets/shop/plr/guide-etsy.png?v=20260722-2" },
+    { category: "Marketing digital", title: "Guide du Marketing d’Affiliation", badge: "Débutantes", image: "assets/shop/plr/guide-affiliation.jpg?v=20260722-2" },
+    { category: "Templates Etsy", title: "Etsy Listing Mockup Templates", badge: "Kit Etsy", image: "assets/shop/plr/mockups-etsy.jpg?v=20260722-2" },
+    { category: "Templates de site", title: "VA Canva Website Template", badge: "Website template", image: "assets/shop/plr/va-website.jpg?v=20260722-2" }
+  ];
+  const publicProductCards = publicProducts.map((product) => {
+    const url = `${etsyShop}?search_query=${encodeURIComponent(product.title)}`;
+    return html`
+      <article class="bd-public-product">
+        <a class="bd-public-product-image" href="${url}" target="_blank" rel="noopener">
+          <img src="${product.image}" alt="${escapeHtml(product.title)}, produit digital PLR disponible dans la boutique Bibliothèque Digitale" loading="lazy">
+          <span>${escapeHtml(product.badge)}</span>
+        </a>
+        <div><p>${escapeHtml(product.category)}</p><h3>${escapeHtml(product.title)}</h3><a href="${url}" target="_blank" rel="noopener">Voir sur Etsy ↗</a></div>
+      </article>
+    `;
+  }).join("");
   app.innerHTML = html`
     <section class="bd-brand-banner" aria-label="Bibliothèque Digitale, boutique de produits digitaux PLR premium">
       <img src="assets/banniere-bibliotheque-digitale-qr.png" alt="Bibliothèque Digitale par Cécilia : produits digitaux premium sous licence PLR, templates Canva, visuels IA et ressources pour développer un business faceless">
@@ -1047,13 +1069,14 @@ function renderPublicHome() {
       <a href="#/shop" class="bd-category-card wine"><span>03</span><p>Visuels premium</p><h3>Créer sans vous montrer</h3><small>Photos, vidéos, mockups et univers IA haut de gamme →</small></a>
     </section>
 
-    <section class="bd-featured">
-      <div class="bd-section-heading"><div><p class="eyebrow">La sélection du moment</p><h2>À découvrir dans la Bibliothèque</h2></div><a href="#/shop">Voir toute la collection →</a></div>
-      <div class="bd-featured-grid">
-        <article><img src="assets/shop/faceless-guide.jpg" alt="Formation marketing faceless PLR" loading="lazy"><p>Business & marketing</p><h3>Formation Marketing Digital Faceless</h3><a href="${etsyShop}?search_query=faceless%20marketing" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
-        <article><img src="assets/branding-planner-preview.png" alt="Branding Planner et Workbook PLR" loading="lazy"><p>Branding & stratégie</p><h3>Branding Planner & Workbook PLR</h3><a href="${etsyShop}?search_query=branding%20planner" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
-        <article><img src="assets/shop/melanin-stock.jpg" alt="Collection de visuels faceless Melanin" loading="lazy"><p>Photos & vidéos faceless</p><h3>Collection Visuelle Melanin</h3><a href="${etsyShop}?search_query=melanin%20faceless" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
+    <section class="bd-public-library" id="bibliotheque-plr">
+      <div class="bd-section-heading">
+        <div><p class="eyebrow">Boutique publique · Produits PLR à vendre</p><h2>Entrez dans la <em>Bibliothèque PLR.</em></h2><p>Découvrez nos ressources avant même de créer un compte. Choisissez votre produit, achetez-le sur Etsy, puis retrouvez-le ensuite dans votre espace client personnel.</p></div>
+        <a href="#/shop">Explorer toute la Bibliothèque →</a>
       </div>
+      <div class="bd-public-library-pills" aria-label="Catégories de produits PLR"><span>📸 Photos faceless</span><span>Canva</span><span>Etsy</span><span>Marketing digital</span><span>Templates de site</span></div>
+      <div class="bd-public-product-grid">${publicProductCards}</div>
+      <div class="bd-public-library-footer"><div><strong>21 produits PLR actuellement référencés</strong><span>La collection continue de s’enrichir.</span></div><a class="button bd-primary" href="#/shop">Voir tous les produits PLR</a></div>
     </section>
 
     <section class="bd-library-story">
