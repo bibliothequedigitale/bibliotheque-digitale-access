@@ -237,11 +237,64 @@ button.danger { background: #8b3838; }
 
 .auth-card {
   display: grid;
-  grid-template-columns: 1.1fr .9fr;
+  grid-template-columns: .78fr 1.22fr;
   gap: 28px;
   padding: 30px;
-  align-items: center;
+  align-items: start;
 }
+
+.auth-intro {
+  position: sticky;
+  top: 100px;
+  padding: 18px 4px;
+}
+
+.simple-steps {
+  display: grid;
+  gap: 16px;
+  margin: 30px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: access-step;
+}
+
+.simple-steps li {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  column-gap: 12px;
+  counter-increment: access-step;
+}
+
+.simple-steps li::before {
+  content: counter(access-step);
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--rose-dark);
+  font-weight: 900;
+}
+
+.simple-steps span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.auth-actions {
+  display: grid;
+  gap: 16px;
+}
+
+.onboarding-panel h2 { font-size: clamp(28px, 3vw, 38px); }
+.signin-panel { box-shadow: none; }
+.signin-panel h3 { font-size: 23px; }
+.signin-panel button { margin-top: 10px; }
+.optional { color: var(--muted); font-weight: 400; }
+.full-button { width: 100%; text-align: center; }
+button:disabled { cursor: wait; opacity: .65; }
 
 .panel, .notice {
   padding: 24px;

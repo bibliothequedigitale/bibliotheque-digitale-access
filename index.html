@@ -25,29 +25,65 @@
 
   <template id="auth-template">
     <section class="auth-card">
-      <div>
+      <div class="auth-intro">
         <p class="eyebrow">Private Customer Library</p>
-        <h1>Access your digital products and bonuses.</h1>
-        <p>Create an account or sign in with the same email you use for your digital product access. After approval, purchased products unlock inside your library.</p>
+        <h1>Request access in one simple step.</h1>
+        <p>New customer? Create your account and send your Etsy purchase details with one form. Once approved, your product and all its bonuses will appear in your library.</p>
+        <ol class="simple-steps">
+          <li><strong>Send your request</strong><span>Account and request are created together.</span></li>
+          <li><strong>We verify your Etsy purchase</strong><span>Your request is reviewed manually.</span></li>
+          <li><strong>Your product unlocks</strong><span>Sign in anytime to access your files and bonuses.</span></li>
+        </ol>
       </div>
-      <form data-auth-form class="panel">
-        <label>Email
-          <input name="email" type="email" autocomplete="email" required>
-        </label>
-        <label>Password
-          <input name="password" type="password" autocomplete="current-password" required minlength="6">
-        </label>
-        <div class="button-row">
-          <button type="submit" data-auth-mode="sign-in">Sign in</button>
-          <button class="secondary" type="submit" data-auth-mode="sign-up">Create account</button>
-        </div>
-        <p class="form-note" data-auth-message></p>
-      </form>
+      <div class="auth-actions">
+        <form data-onboarding-form class="panel onboarding-panel">
+          <p class="eyebrow">New customer</p>
+          <h2>Create my access request</h2>
+          <label>First name
+            <input name="first_name" type="text" autocomplete="given-name" required placeholder="Example: Candy">
+          </label>
+          <label>Email
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>Create a password
+            <input name="password" type="password" autocomplete="new-password" required minlength="6">
+          </label>
+          <label>Product purchased
+            <select name="product_slug" required data-onboarding-products></select>
+          </label>
+          <label>Etsy order number
+            <input name="etsy_order_number" required placeholder="Example: 1234567890">
+          </label>
+          <label>Etsy email or buyer name
+            <input name="etsy_buyer_info" required placeholder="Email, username, or buyer name">
+          </label>
+          <label>Notes <span class="optional">(optional)</span>
+            <textarea name="notes" placeholder="Anything that helps verify your purchase"></textarea>
+          </label>
+          <button type="submit" class="rose full-button">Create account &amp; request access</button>
+          <p class="form-note" data-onboarding-message></p>
+        </form>
+
+        <form data-auth-form class="panel signin-panel">
+          <div>
+            <p class="eyebrow">Already registered?</p>
+            <h3>Sign in to my library</h3>
+          </div>
+          <label>Email
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>Password
+            <input name="password" type="password" autocomplete="current-password" required minlength="6">
+          </label>
+          <button type="submit">Sign in</button>
+          <p class="form-note" data-auth-message></p>
+        </form>
+      </div>
     </section>
   </template>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-config.js?v=20260511-secure-product-design-v2"></script>
-  <script src="assets/app.js?v=20260721-student-storage-fix"></script>
+  <script src="assets/app.js?v=20260722-personal-welcome"></script>
 </body>
 </html>

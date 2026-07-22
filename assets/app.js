@@ -90,6 +90,18 @@ function hasPendingRequest(productId) {
   return state.requests.some((item) => item.product_id === productId && item.status === "pending");
 }
 
+function customerFirstName() {
+  const metadata = state.session?.user?.user_metadata || {};
+  const savedName = String(metadata.first_name || metadata.given_name || metadata.name || "").trim();
+  const emailName = String(state.session?.user?.email || "")
+    .split("@")[0]
+    .split(/[._-]/)[0]
+    .replace(/\d+/g, "")
+    .trim();
+  const firstName = savedName.split(/\s+/)[0] || emailName || "there";
+  return firstName.charAt(0).toUpperCase() + firstName.slice(1);
+}
+
 function shouldStartWithAccessRequest() {
   return !isAdmin() && state.access.length === 0 && state.requests.length === 0;
 }
@@ -101,10 +113,15 @@ function renderAuth(message = "") {
   const messageNode = app.querySelector("[data-auth-message]");
   messageNode.textContent = message;
 
+  const onboardingForm = app.querySelector("[data-onboarding-form]");
+  const productSelect = onboardingForm.querySelector("[data-onboarding-products]");
+  const availableProducts = fallbackProducts.filter((product) => product.status === "active");
+  productSelect.innerHTML = availableProducts
+    .map((product) => `<option value="${escapeHtml(product.slug)}">${escapeHtml(product.name)}</option>`)
+    .join("");
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const submitter = event.submitter;
-    const mode = submitter?.dataset.authMode || "sign-in";
     const formData = new FormData(form);
     const email = formData.get("email");
     const password = formData.get("password");
@@ -116,21 +133,89 @@ function renderAuth(message = "") {
       return;
     }
 
-    const result = mode === "sign-up"
-      ? await db.auth.signUp({ email, password })
-      : await db.auth.signInWithPassword({ email, password });
+    const result = await db.auth.signInWithPassword({ email, password });
 
     if (result.error) {
       messageNode.textContent = result.error.message;
       return;
     }
 
-    messageNode.textContent = mode === "sign-up"
-      ? "Account created. Check your email if confirmation is enabled, then sign in."
-      : "Signed in.";
+    messageNode.textContent = "Signed in.";
 
     await init();
   });
+
+  onboardingForm.addEventListener("submit", submitOnboardingRequest);
+}
+
+async function submitOnboardingRequest(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const message = form.querySelector("[data-onboarding-message]");
+  const button = form.querySelector('button[type="submit"]');
+  const formData = new FormData(form);
+  const email = String(formData.get("email") || "").trim();
+  const password = String(formData.get("password") || "");
+  const firstName = String(formData.get("first_name") || "").trim();
+  const productSlug = String(formData.get("product_slug") || "");
+
+  message.textContent = "Creating your account and request...";
+  button.disabled = true;
+
+  if (!supabaseReady) {
+    message.textContent = "The customer library is temporarily unavailable. Please contact Bibliotheque Digitale.";
+    button.disabled = false;
+    return;
+  }
+
+  const { data: signUpData, error: signUpError } = await db.auth.signUp({
+    email,
+    password,
+    options: { data: { first_name: firstName } }
+  });
+  if (signUpError) {
+    message.textContent = signUpError.message.toLowerCase().includes("already")
+      ? "An account already exists for this email. Please use the sign-in form below."
+      : signUpError.message;
+    button.disabled = false;
+    return;
+  }
+
+  if (!signUpData.session) {
+    message.textContent = "Your account was created but email confirmation is still enabled. Please contact Bibliotheque Digitale so we can activate it.";
+    button.disabled = false;
+    return;
+  }
+
+  state.session = signUpData.session;
+  await loadData();
+  const product = state.products.find((item) => item.slug === productSlug);
+
+  if (!product) {
+    message.textContent = "Your account is ready, but this product could not be found. Please use Request Access from your library.";
+    button.disabled = false;
+    return;
+  }
+
+  const payload = {
+    user_id: state.session.user.id,
+    customer_email: state.session.user.email,
+    product_id: product.id,
+    etsy_order_number: String(formData.get("etsy_order_number") || "").trim(),
+    etsy_buyer_info: String(formData.get("etsy_buyer_info") || "").trim(),
+    notes: String(formData.get("notes") || "").trim(),
+    status: "pending"
+  };
+
+  const { error: requestError } = await db.from("access_requests").insert(payload);
+  if (requestError) {
+    message.textContent = `Your account is ready, but the request could not be sent: ${requestError.message}`;
+    button.disabled = false;
+    return;
+  }
+
+  location.hash = "/library";
+  await init();
 }
 
 function renderShell(title, subtitle, body) {
@@ -192,7 +277,7 @@ function renderLibrary() {
     .join("");
 
   renderShell(
-    "My Product Library",
+    isAdmin() ? "My Product Library" : `Hello ${customerFirstName()},`,
     "Access every digital product you purchased from Bibliotheque Digitale. Locked products can be requested after purchase.",
     html`
       <section class="grid">${cards}</section>
