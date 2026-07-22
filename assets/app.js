@@ -6,6 +6,7 @@ const sidebarAccount = document.querySelector("[data-sidebar-account]");
 const profileNameNode = document.querySelector("[data-profile-name]");
 const profileInitialNode = document.querySelector("[data-profile-initial]");
 const brandLink = document.querySelector(".brand");
+const publicLoginLink = document.querySelector(".public-login");
 
 const config = window.BD_CONFIG || {};
 const supabaseReady = Boolean(
@@ -45,12 +46,18 @@ function isAdmin() {
 }
 
 function setAdminVisibility() {
+  const current = route().split("?")[0];
+  const viewingPublicSite = current === "/home" || current === "/";
   if (adminLink) adminLink.hidden = !isAdmin();
   if (signOutButton) signOutButton.hidden = !state.session;
-  if (sidebarAccount) sidebarAccount.hidden = !state.session;
-  document.body.classList.toggle("has-session", Boolean(state.session));
-  document.body.classList.toggle("public-site", !state.session);
-  if (brandLink) brandLink.href = state.session ? "#/library" : "#/home";
+  if (sidebarAccount) sidebarAccount.hidden = !state.session || viewingPublicSite;
+  document.body.classList.toggle("has-session", Boolean(state.session) && !viewingPublicSite);
+  document.body.classList.toggle("public-site", !state.session || viewingPublicSite);
+  if (brandLink) brandLink.href = "#/home";
+  if (publicLoginLink) {
+    publicLoginLink.href = state.session ? "#/library" : "#/login";
+    publicLoginLink.textContent = state.session ? "Mon espace client" : "Espace client";
+  }
 
   if (state.session) {
     const firstName = customerFirstName();
@@ -58,7 +65,6 @@ function setAdminVisibility() {
     if (profileInitialNode) profileInitialNode.textContent = firstName.charAt(0).toUpperCase();
   }
 
-  const current = route().split("?")[0];
   document.querySelectorAll(".portal-nav a[href^='#/']").forEach((link) => {
     const destination = link.getAttribute("href").replace("#", "");
     const active = destination === current || (destination === "/products" && current.startsWith("/product/"));
