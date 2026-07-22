@@ -23,8 +23,8 @@ window.BD_CONFIG = {
         path: "branding-planner-plr/branding-planner-workbook-us-letter-plr.pdf"
       },
       {
-        label: "Mini Brand Strategy Course",
-        description: "HTML course with lessons, examples, and writable sections.",
+        label: "The Brand Blueprint Course",
+        description: "Premium 12-module brand strategy course with workshops and a final Brand Book.",
         path: "branding-planner-plr/bonus_course.html"
       },
       {
@@ -38,8 +38,8 @@ window.BD_CONFIG = {
         path: "branding-planner-plr/branding_strategy_guide.pdf"
       },
       {
-        label: "Customer-Ready Copy Pack",
-        description: "Copy pack for recreating bonus pages in your own Canva design.",
+        label: "Canva PLR Customization Studio",
+        description: "Editable content and guidance for building your own branded Canva version.",
         path: "branding-planner-plr/customer-ready-copy-pack.html"
       }
     ]

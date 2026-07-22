@@ -591,8 +591,8 @@ function renderBrandingPlannerProduct(product, files) {
       <div class="grid">
         <article class="card">
           <span class="icon">01</span>
-          <h3>Mini Brand Strategy Course</h3>
-          <p>Open the course with seven guided lessons, examples, and writable “Your turn” sections.</p>
+          <h3>The Brand Blueprint Course</h3>
+          <p>Follow twelve premium modules with examples, strategic workshops, saved progress and a complete Brand Book project.</p>
           ${fileButton("Open Course", course)}
         </article>
         <article class="card">
@@ -609,9 +609,9 @@ function renderBrandingPlannerProduct(product, files) {
         </article>
         <article class="card">
           <span class="icon">04</span>
-          <h3>Customer-Ready Copy Pack</h3>
-          <p>Copy the bonus text into your own Canva design, customize it, and export your finished bonus pages as flat PDFs.</p>
-          ${fileButton("Open Copy Pack", copyPack)}
+          <h3>Canva PLR Customization Studio</h3>
+          <p>Copy the editable text into Canva, then adapt the strategy, audience, examples and design to create your own branded version.</p>
+          ${fileButton("Open Customization Studio", copyPack)}
         </article>
       </div>
     </section>
@@ -654,7 +654,7 @@ function renderBrandingPlannerProduct(product, files) {
             <li>Sell your finished flattened planner files as PDF, PNG, or JPEG.</li>
             <li>Use the bonus resources to prepare, improve, and package your offer.</li>
             <li>Export or recreate bonus pages as finished flat PDFs for your customers.</li>
-            <li>Copy the Customer-Ready Copy Pack text into your own Canva design.</li>
+            <li>Use the Canva PLR Customization Studio to adapt the text, positioning, examples and visual direction to your own brand.</li>
           </ul>
         </div>
         <div class="license-card">
