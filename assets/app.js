@@ -916,14 +916,19 @@ async function submitAccessRequest(event) {
 
 function renderPublicHome() {
   const etsyShop = "https://www.etsy.com/shop/BibliothequeDigitale";
+  const launchMap = "https://shop.beacons.ai/aina_icon/e65f7d06-4739-4cc0-9b1f-c48b499e5f97";
   app.innerHTML = html`
+    <section class="bd-brand-banner" aria-label="Bibliothèque Digitale, boutique de produits digitaux PLR premium">
+      <img src="assets/banniere-bibliotheque-digitale.png" alt="Bibliothèque Digitale par Cécilia : produits digitaux premium sous licence PLR, templates Canva, visuels IA et ressources pour développer un business faceless">
+      <a href="${launchMap}" target="_blank" rel="noopener" aria-label="Télécharger gratuitement The A.I.A Launch Map">Recevoir ma Launch Map gratuite <span>↗</span></a>
+    </section>
     <section class="bd-home-hero">
       <div class="bd-home-copy">
         <p class="eyebrow">La boutique PLR premium des créatrices ambitieuses</p>
         <h1>Créez moins.<br><em>Lancez mieux.</em></h1>
         <p class="bd-home-lead">Des produits digitaux avec droits de revente, des visuels IA haut de gamme et des ressources Canva pensées pour transformer vos idées en une marque prête à vendre.</p>
         <div class="bd-home-actions">
-          <a class="button bd-primary" href="#/shop">Explorer la librairie</a>
+          <a class="button bd-primary" href="#/shop">Explorer la Bibliothèque</a>
           <a class="bd-arrow-link" href="#/login">Accéder à mes achats <span>→</span></a>
         </div>
         <div class="bd-trust-row"><span><strong>678+</strong> ventes Etsy</span><span><strong>4,8/5</strong> satisfaction</span><span><strong>100 %</strong> digital</span></div>
@@ -950,7 +955,7 @@ function renderPublicHome() {
     </section>
 
     <section class="bd-featured">
-      <div class="bd-section-heading"><div><p class="eyebrow">La sélection du moment</p><h2>À découvrir dans la librairie</h2></div><a href="#/shop">Voir toute la collection →</a></div>
+      <div class="bd-section-heading"><div><p class="eyebrow">La sélection du moment</p><h2>À découvrir dans la Bibliothèque</h2></div><a href="#/shop">Voir toute la collection →</a></div>
       <div class="bd-featured-grid">
         <article><img src="assets/shop/faceless-guide.jpg" alt="Formation marketing faceless PLR" loading="lazy"><p>Business & marketing</p><h3>Formation Marketing Digital Faceless</h3><a href="${etsyShop}?search_query=faceless%20marketing" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
         <article><img src="assets/branding-planner-preview.png" alt="Branding Planner et Workbook PLR" loading="lazy"><p>Branding & stratégie</p><h3>Branding Planner & Workbook PLR</h3><a href="${etsyShop}?search_query=branding%20planner" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
@@ -960,7 +965,12 @@ function renderPublicHome() {
 
     <section class="bd-library-story">
       <div class="bd-library-visual"><span>BD</span><p>Votre collection,<br>toujours à portée de main.</p></div>
-      <div class="bd-library-copy"><p class="eyebrow">Après votre achat</p><h2>Vos produits vivent désormais dans <em>votre bibliothèque.</em></h2><p>Retrouvez au même endroit les produits achetés dans la boutique, leurs bonus, vos ressources exclusives et les futures mises à jour. Un espace personnel, simple et beau, accessible sur ordinateur comme sur téléphone.</p><div class="bd-home-actions"><a class="button bd-primary" href="#/login">Ouvrir mon espace client</a><a class="bd-arrow-link" href="#/shop">Découvrir la librairie <span>→</span></a></div></div>
+      <div class="bd-library-copy"><p class="eyebrow">Après votre achat</p><h2>Vos produits vivent désormais dans <em>votre bibliothèque.</em></h2><p>Retrouvez au même endroit les produits achetés dans la boutique, leurs bonus, vos ressources exclusives et les futures mises à jour. Un espace personnel, simple et beau, accessible sur ordinateur comme sur téléphone.</p><div class="bd-home-actions"><a class="button bd-primary" href="#/login">Ouvrir mon espace client</a><a class="bd-arrow-link" href="#/shop">Découvrir la Bibliothèque <span>→</span></a></div></div>
+    </section>
+
+    <section class="bd-freebie">
+      <div class="bd-freebie-visual"><img src="assets/aia-launch-map.png" alt="The A.I.A Launch Map, plan d'action gratuit pour lancer un business faceless de produits digitaux" loading="lazy"></div>
+      <div class="bd-freebie-copy"><p class="eyebrow">Votre cadeau de bienvenue</p><h2>Lancez votre business faceless avec <em>un plan clair.</em></h2><p>Téléchargez gratuitement The A.I.A Launch Map : une feuille de route étape par étape pour trouver votre niche, créer une offre digitale, produire du contenu avec une influenceuse IA et automatiser vos premières ventes.</p><ul><li>Positionnement et niche</li><li>Création de votre offre</li><li>Contenu et audience</li><li>Automatisation et revenus</li></ul><a class="button bd-primary" href="${launchMap}" target="_blank" rel="noopener">Recevoir gratuitement la Launch Map ↗</a></div>
     </section>
 
     <section class="bd-values">
@@ -970,7 +980,7 @@ function renderPublicHome() {
       <article><strong>↻</strong><h3>Bonus & mises à jour</h3><p>Votre espace client rassemble les ressources qui accompagnent vos achats.</p></article>
     </section>
 
-    <section class="bd-final-cta"><p class="eyebrow">Bienvenue dans Bibliothèque Digitale</p><h2>Votre prochaine idée mérite<br><em>une longueur d’avance.</em></h2><a class="button bd-light" href="#/shop">Entrer dans la librairie</a></section>
+    <section class="bd-final-cta"><p class="eyebrow">Bienvenue dans Bibliothèque Digitale</p><h2>Votre prochaine idée mérite<br><em>une longueur d’avance.</em></h2><a class="button bd-light" href="#/shop">Entrer dans la Bibliothèque</a></section>
   `;
 }
 
