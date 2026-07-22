@@ -5,6 +5,7 @@ const adminLink = document.querySelector("[data-admin-link]");
 const sidebarAccount = document.querySelector("[data-sidebar-account]");
 const profileNameNode = document.querySelector("[data-profile-name]");
 const profileInitialNode = document.querySelector("[data-profile-initial]");
+const brandLink = document.querySelector(".brand");
 
 const config = window.BD_CONFIG || {};
 const supabaseReady = Boolean(
@@ -48,6 +49,8 @@ function setAdminVisibility() {
   if (signOutButton) signOutButton.hidden = !state.session;
   if (sidebarAccount) sidebarAccount.hidden = !state.session;
   document.body.classList.toggle("has-session", Boolean(state.session));
+  document.body.classList.toggle("public-site", !state.session);
+  if (brandLink) brandLink.href = state.session ? "#/library" : "#/home";
 
   if (state.session) {
     const firstName = customerFirstName();
@@ -64,7 +67,7 @@ function setAdminVisibility() {
 }
 
 function route() {
-  return location.hash.replace("#", "") || "/library";
+  return location.hash.replace("#", "") || "/home";
 }
 
 function html(strings, ...values) {
@@ -911,6 +914,66 @@ async function submitAccessRequest(event) {
   await loadData();
 }
 
+function renderPublicHome() {
+  const etsyShop = "https://www.etsy.com/shop/BibliothequeDigitale";
+  app.innerHTML = html`
+    <section class="bd-home-hero">
+      <div class="bd-home-copy">
+        <p class="eyebrow">La boutique PLR premium des créatrices ambitieuses</p>
+        <h1>Créez moins.<br><em>Lancez mieux.</em></h1>
+        <p class="bd-home-lead">Des produits digitaux avec droits de revente, des visuels IA haut de gamme et des ressources Canva pensées pour transformer vos idées en une marque prête à vendre.</p>
+        <div class="bd-home-actions">
+          <a class="button bd-primary" href="#/shop">Explorer la librairie</a>
+          <a class="bd-arrow-link" href="#/login">Accéder à mes achats <span>→</span></a>
+        </div>
+        <div class="bd-trust-row"><span><strong>678+</strong> ventes Etsy</span><span><strong>4,8/5</strong> satisfaction</span><span><strong>100 %</strong> digital</span></div>
+      </div>
+      <div class="bd-hero-collage" aria-label="Sélection de produits Bibliothèque Digitale">
+        <figure class="bd-cover-main"><img src="assets/shop/faceless-guide.jpg" alt="Guide marketing faceless PLR"><figcaption>Créer · personnaliser · revendre</figcaption></figure>
+        <figure class="bd-cover-small top"><img src="assets/shop/canva-course.jpg" alt="Formation Canva avec licence PLR"></figure>
+        <figure class="bd-cover-small bottom"><img src="assets/branding-planner-preview.png" alt="Branding Planner et Workbook PLR"></figure>
+        <span class="bd-seal">PLR<br>Premium</span>
+      </div>
+    </section>
+
+    <section class="bd-marquee" aria-label="Catégories de la boutique"><span>PLR & MRR</span><i>✦</i><span>Canva Templates</span><i>✦</i><span>Faceless Content</span><i>✦</i><span>Business Tools</span><i>✦</i><span>AI Visuals</span></section>
+
+    <section class="bd-intro">
+      <div><p class="eyebrow">Votre raccourci créatif</p><h2>Une bibliothèque pensée pour <em>faire grandir vos idées.</em></h2></div>
+      <div><p>Chaque ressource est choisie ou créée pour les femmes, mamans, coachs et créatrices qui souhaitent développer une activité digitale élégante — sans repartir de zéro.</p><p>Personnalisez dans Canva, adaptez à votre univers et utilisez les droits indiqués pour créer votre prochaine offre.</p></div>
+    </section>
+
+    <section class="bd-category-grid">
+      <a href="#/shop" class="bd-category-card rose"><span>01</span><p>Guides & formations</p><h3>Apprendre et lancer</h3><small>Marketing digital, Etsy, Canva et stratégie faceless →</small></a>
+      <a href="#/shop" class="bd-category-card cream"><span>02</span><p>Produits PLR</p><h3>Personnaliser et revendre</h3><small>Workbooks, ebooks et ressources prêtes à transformer →</small></a>
+      <a href="#/shop" class="bd-category-card wine"><span>03</span><p>Visuels premium</p><h3>Créer sans vous montrer</h3><small>Photos, vidéos, mockups et univers IA haut de gamme →</small></a>
+    </section>
+
+    <section class="bd-featured">
+      <div class="bd-section-heading"><div><p class="eyebrow">La sélection du moment</p><h2>À découvrir dans la librairie</h2></div><a href="#/shop">Voir toute la collection →</a></div>
+      <div class="bd-featured-grid">
+        <article><img src="assets/shop/faceless-guide.jpg" alt="Formation marketing faceless PLR" loading="lazy"><p>Business & marketing</p><h3>Formation Marketing Digital Faceless</h3><a href="${etsyShop}?search_query=faceless%20marketing" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
+        <article><img src="assets/branding-planner-preview.png" alt="Branding Planner et Workbook PLR" loading="lazy"><p>Branding & stratégie</p><h3>Branding Planner & Workbook PLR</h3><a href="${etsyShop}?search_query=branding%20planner" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
+        <article><img src="assets/shop/melanin-stock.jpg" alt="Collection de visuels faceless Melanin" loading="lazy"><p>Photos & vidéos faceless</p><h3>Collection Visuelle Melanin</h3><a href="${etsyShop}?search_query=melanin%20faceless" target="_blank" rel="noopener">Découvrir sur Etsy ↗</a></article>
+      </div>
+    </section>
+
+    <section class="bd-library-story">
+      <div class="bd-library-visual"><span>BD</span><p>Votre collection,<br>toujours à portée de main.</p></div>
+      <div class="bd-library-copy"><p class="eyebrow">Après votre achat</p><h2>Vos produits vivent désormais dans <em>votre bibliothèque.</em></h2><p>Retrouvez au même endroit les produits achetés dans la boutique, leurs bonus, vos ressources exclusives et les futures mises à jour. Un espace personnel, simple et beau, accessible sur ordinateur comme sur téléphone.</p><div class="bd-home-actions"><a class="button bd-primary" href="#/login">Ouvrir mon espace client</a><a class="bd-arrow-link" href="#/shop">Découvrir la librairie <span>→</span></a></div></div>
+    </section>
+
+    <section class="bd-values">
+      <article><strong>✦</strong><h3>Prêt à personnaliser</h3><p>Des fichiers pensés pour Canva et les outils que vous utilisez déjà.</p></article>
+      <article><strong>◇</strong><h3>Droits clairement indiqués</h3><p>PLR, MRR ou usage commercial : chaque fiche précise ce que vous pouvez faire.</p></article>
+      <article><strong>♡</strong><h3>Créé avec attention</h3><p>Des tendances étudiées, des visuels raffinés et une vraie valeur ajoutée.</p></article>
+      <article><strong>↻</strong><h3>Bonus & mises à jour</h3><p>Votre espace client rassemble les ressources qui accompagnent vos achats.</p></article>
+    </section>
+
+    <section class="bd-final-cta"><p class="eyebrow">Bienvenue dans Bibliothèque Digitale</p><h2>Votre prochaine idée mérite<br><em>une longueur d’avance.</em></h2><a class="button bd-light" href="#/shop">Entrer dans la librairie</a></section>
+  `;
+}
+
 function renderShop() {
   const salesPage = "https://the-aicon-academy.vercel.app/pages/vente-b.html?utm_source=bibliotheque_digitale&utm_medium=customer_shop&utm_campaign=shop_preview";
   app.innerHTML = html`
@@ -1265,16 +1328,20 @@ async function renderRoute() {
     return;
   }
 
+  const current = route().split("?")[0];
+
   if (!state.session) {
-    renderAuth();
+    if (current === "/home" || current === "/") renderPublicHome();
+    else if (current === "/shop") renderInteractiveShop();
+    else renderAuth();
     return;
   }
 
   await loadData();
   setAdminVisibility();
 
-  const current = route().split("?")[0];
   if (current.startsWith("/product/")) renderProductPage(current.replace("/product/", ""));
+  else if (current === "/home" || current === "/") renderPublicHome();
   else if (current === "/library") renderDashboard();
   else if (current === "/products") renderProductsLibrary();
   else if (current === "/request-access") renderRequestAccess();
