@@ -148,6 +148,16 @@ h1 { font-size: clamp(38px, 5vw, 68px); }
 h2 { font-size: clamp(30px, 3.4vw, 46px); }
 h3 { font-size: 26px; }
 
+img,
+video {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+video::-webkit-media-controls-download-button {
+  display: none;
+}
+
 .hero-content {
   display: grid;
   grid-template-columns: 1.1fr .9fr;

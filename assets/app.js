@@ -642,6 +642,9 @@ function renderBrandingPlannerProduct(product, files) {
         <div class="product-video-showcase">
           <video
             controls
+            controlslist="nodownload noremoteplayback"
+            disablepictureinpicture
+            disableremoteplayback
             playsinline
             preload="metadata"
             poster="assets/shop/plr/branding-planner-hd.png"
@@ -1566,6 +1569,15 @@ signOutButton?.addEventListener("click", async () => {
 });
 
 window.addEventListener("hashchange", renderRoute);
+
+// Discourage casual copying of the site's editorial media.
+document.addEventListener("contextmenu", (event) => {
+  if (event.target instanceof Element && event.target.closest("img, video")) event.preventDefault();
+});
+
+document.addEventListener("dragstart", (event) => {
+  if (event.target instanceof Element && event.target.closest("img, video")) event.preventDefault();
+});
 
 if (db) {
   db.auth.onAuthStateChange((event, session) => {
